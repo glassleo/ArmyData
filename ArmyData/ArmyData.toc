@@ -1,6 +1,6 @@
-## Interface: 90001
+## Interface: 90002
 ## Title: Army Data
-## Version: 9.0.1
+## Version: 9.0.2
 ## Notes: Stores data for your Army of Alts
 ## Author: Leo Bolin
 
