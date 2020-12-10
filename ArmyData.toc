@@ -1,0 +1,9 @@
+## Interface: 90001
+## Title: Army Data
+## Version: 9.0.1
+## Notes: Stores data for your Army of Alts
+## Author: Leo Bolin
+
+## SavedVariables: ArmyDB
+
+ArmyData.lua
