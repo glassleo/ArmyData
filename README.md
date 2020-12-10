@@ -1,3 +1,5 @@
 # ArmyData
 
-Personal helper addon for World of Warcraft to keep track of my characters.
+Keeps track of character information for all your characters in a global table.
+
+Do not install without being able to understand and modify the code for your own use first.
