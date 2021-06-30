@@ -14,7 +14,7 @@ Also assumes that you have Engineering on all characters.
 - Displays the characters with the most amount of the given currency on that connected realm and faction
 - If you don't specify a currency name, gold will be used instead
 
-## Global table: ``ArmyDB[name-realm]``
+## Global table: ``ArmyDB["name-realm"]``
 
 - ``Name`` - Character Name - Example: ``Leo``
 - ``Realm`` - Realm Name - Example: ``The Sha'tar``
