@@ -19,7 +19,7 @@ Also assumes that you have Engineering on all characters.
 - ``Name`` - Character Name - Example: ``Leo``
 - ``Realm`` - Realm Name - Example: ``The Sha'tar``
 - ``Faction`` - Faction Name - Example: ``Horde``
-- ``Class`` - Class (uppercase) - Example: ``DEATHKNIGHT``
+- ``Class`` - Class (uppercase, in English) - Example: ``DEATHKNIGHT``
 - ``Money`` - Total amount of money (in Copper) - Example: ``124578454`` (12,457 Gold, 84 Silver and 54 Copper)
 - ``LootSpec`` - Current Loot Specialization - integer from ``0-4`` with ``0`` being no loot spec
 - ``Profession`` - Primary profession that is not Engineering - Example: ``Alchemy``
