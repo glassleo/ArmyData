@@ -24,4 +24,4 @@ Also assumes that you have Engineering on all characters.
 - ``LootSpec`` - Current Loot Specialization - integer from ``0-4`` with ``0`` being no loot spec
 - ``Profession`` - Primary profession that is not Engineering - Example: ``Alchemy``
 - ``ProfessionIcon`` - Profession icon texture ID - Example: ``136240`` (Alchemy)
-- Most currencies in CamelCase format as integers of current amount
+- Most currencies in CamelCase format as integers of current amount, for example: ``GarrisonResources``, ``EpicureansAward`` or ``CoinsOfAir``
