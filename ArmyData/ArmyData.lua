@@ -15,6 +15,14 @@ local currencies = {
 	["Oil"] = 1101,
 	["OrderResources"] = 1220,
 	["WarResources"] = 1560,
+	["ReservoirAnima"] = 1813,
+
+	-- Dungeon and Raid
+	["Valor"] = 1191,
+
+	-- Player vs. Player
+	["Honor"] = 1792,
+	["Conquest"] = 1602,
 
 	-- Bonus Rolls
 	["LesserCharmOfGoodFortune"] = 738,
@@ -68,6 +76,18 @@ local currencies = {
 	["CoalescingVisions"] = 1755,
 	["CorruptedMemento"] = 1744,
 	["EchoesOfNyalotha"] = 1803,
+
+	-- Shadowlands
+	["GratefulOffering"] = 1885,
+	["RedeemedSoul"] = 1810,
+	["Stygia"] = 1767,
+	["InfusedRuby"] = 1820,
+	["SinstoneFragments"] = 1816,
+	["MedallionOfService"] = 1819,
+	["CatalogedResearch"] = 1931,
+	["SoulAsh"] = 1828,
+	["SoulCinders"] = 1906,
+	["StygianEmber"] = 1977,
 
 	-- Cooking
 	["EpicureansAward"] = 81,
