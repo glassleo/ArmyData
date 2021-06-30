@@ -1,6 +1,6 @@
 # ArmyData
 
-A rather crude addon that simply keeps track of character information for all your characters in a global table that other addons can acess (like WeakAuras).
+A rather crude addon that simply keeps track of character information for all your characters in a global table that other addons can acess (like WeakAuras). No one except me will probably ever realistically use this.
 
 There is a slash command to display some gold/currency data. Other than that you will need to write your own WeakAuras or addons to display the information.
 
