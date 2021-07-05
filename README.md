@@ -4,7 +4,14 @@ A rather crude addon that simply keeps track of character information for all yo
 
 There is a slash command to display some gold/currency data. Other than that you will need to write your own WeakAuras or addons to display the information.
 
-Takes into account connected realms, but currnetly there is only data for the the specific realms I happen to play on. It also assumes that you have Engineering on all characters, since I do.
+Takes into account connected realms, but currently there is only connected realm data for the the specific realms I happen to play on:
+
+- Moonglade / Steamwheedle Cartel / The Sha'tar
+- Bloodfeather / Kor'gall / Executus / Burning Steppes / Shattered Hand / Terokkar / Saurfang / Darkspear
+- Ravenholdt / Sporeggar / Scarshield Legion / The Venture Co / Defias Brotherhood / Earthen Ring / Darkmoon Faire
+- Al'Akir / Xavius / Skullcrusher / Burning Legion
+
+It also assumes that you have **Engineering on all characters**, since I do.
 
 ## Slash command: ``/army CurrencyName``
 
