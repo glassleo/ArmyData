@@ -28,5 +28,5 @@ It also assumes that you have **Engineering on all characters**, since I do.
 - ``Money`` - Total amount of money (in Copper) - Example: ``124578454`` (12,457 Gold, 84 Silver and 54 Copper)
 - ``LootSpec`` - Current Loot Specialization - integer from ``0-4`` with ``0`` being no loot spec
 - ``Profession`` - Primary profession that is not Engineering - Example: ``Alchemy``
-- ``ProfessionIcon`` - Profession icon texture ID - Example: ``136240`` (Alchemy)
+- ``ProfessionIcon`` - Profession icon texture ID - Example: ``136240`` (![trade_alchemy](https://wow.zamimg.com/images/wow/icons/small/trade_alchemy.jpg))
 - Most currencies in CamelCase format as integers of current amount, for example: ``GarrisonResources``, ``EpicureansAward`` or ``CoinsOfAir``
