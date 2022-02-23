@@ -1,8 +1,8 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: Army Data
-## Version: 9.1.5
+## Version: 9.2.0
 ## Notes: Stores data for your Army of Alts
-## Author: Leo Bolin
+## Author: Leo
 
 ## SavedVariables: ArmyDB
 
