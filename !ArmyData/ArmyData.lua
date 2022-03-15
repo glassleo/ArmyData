@@ -102,6 +102,18 @@ local currencies = {
 	["CoinsOfAir"] = 1416,
 }
 
+local items = {
+	-- Legion
+	["BloodOfSargeras"] = 124124,
+
+	-- PvP
+	["MarkOfHonor"] = 137642,
+
+	-- Battle Pets
+	["PolishedPetCharm"] = 163036,
+	["ShinyPetCharm"] = 116415,
+}
+
 
 
 local function getKeysSortedByValue(tbl, sortFunction)
@@ -162,9 +174,23 @@ local function updateData()
 
 		for currencyName, currencyID in pairs(currencies) do
 			local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencyID) or {}
-
 			ArmyDB[name.."-"..realm][currencyName] = currencyInfo["quantity"] or 0
 		end
+
+		for itemName, itemID in pairs(items) do
+			local amount = GetItemCount(itemID, true)
+			ArmyDB[name.."-"..realm][itemName] = amount or 0
+		end
+	end
+end
+
+
+function GetSimpleItemInfo(id)
+	if id == 124124 then return "|cff0070ddBlood of Sargeras|r", 1417744
+	elseif id == 137642 then return "|cff0070ddMark of Honor|r", 1322720
+	elseif id == 116415 then return "Shiny Pet Charm", 413584
+	elseif id == 163036 then return "Polished Pet Charm", 2004597
+	else return id, 134400
 	end
 end
 
@@ -193,8 +219,30 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		DEFAULT_CHAT_FRAME:AddMessage("|T" .. icon .. ":0|t " .. name)
 
 		for i, k in ipairs(sortedCurrencyTable) do
-			if i <= 9 then
+			if i <= 7 then
 				DEFAULT_CHAT_FRAME:AddMessage(i .. " - " .. k .. ": " .. FormatLargeNumber(currencyTable[k] or 0))
+			end
+		end
+	elseif items[msg] then
+		local itemName = msg
+		local itemTable = {}
+		local name, icon = GetSimpleItemInfo(items[itemName])
+
+		for k, v in pairs(ArmyDB) do
+			local c = ArmyDB[k]
+
+			itemTable[k] = c[itemName] or 0
+		end
+
+		-- Sort the table
+		local sortedItemTable = getKeysSortedByValue(itemTable, function(a, b) return a > b end)
+
+		DEFAULT_CHAT_FRAME:AddMessage("---")
+		DEFAULT_CHAT_FRAME:AddMessage("|T" .. icon .. ":0|t " .. name)
+
+		for i, k in ipairs(sortedItemTable) do
+			if i <= 7 then
+				DEFAULT_CHAT_FRAME:AddMessage(i .. " - " .. k .. ": " .. FormatLargeNumber(itemTable[k] or 0))
 			end
 		end
 	else
