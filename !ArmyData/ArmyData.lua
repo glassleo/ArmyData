@@ -11,11 +11,11 @@ frame:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
 
 local currencies = {
 	-- Resources
-	["GarrisonResources"] = 824,
+	["Garrison Resources"] = 824,
 	["Oil"] = 1101,
-	["OrderResources"] = 1220,
-	["WarResources"] = 1560,
-	["ReservoirAnima"] = 1813,
+	["Order Resources"] = 1220,
+	["War Resources"] = 1560,
+	["Reservoir Anima"] = 1813,
 
 	-- Dungeon and Raid
 	["Valor"] = 1191,
@@ -25,93 +25,94 @@ local currencies = {
 	["Conquest"] = 1602,
 
 	-- Bonus Rolls
-	["LesserCharmOfGoodFortune"] = 738,
-	["ElderCharmOfGoodFortune"] = 697,
-	["MoguRuneOfFate"] = 752,
-	["WarforgedSeal"] = 776,
-	["SealOfTemperedFate"] = 994,
-	["SealOfInevitableFate"] = 1129,
-	["SealOfBrokenFate"] = 1273,
-	["SealOfWartornFate"] = 1580,
+	["Lesser Charm of Good Fortune"] = 738,
+	["Elder Charm of Good Fortune"] = 697,
+	["Mogu Rune of Fate"] = 752,
+	["Warforged Seal"] = 776,
+	["Seal of Tempered Fate"] = 994,
+	["Seal of Inevitable Fate"] = 1129,
+	["Seal of Broken Fate"] = 1273,
+	["Seal of Wartorn Fate"] = 1580,
 
 	-- Events
-	["TimewarpedBadge"] = 1166,
-	["DarkmoonPrizeTicket"] = 515,
-	["TrialOfStyleToken"] = 1379,
-	["BrawlersGold"] = 1299,
+	["Timewarped Badge"] = 1166,
+	["Darkmoon Prize Ticket"] = 515,
+	["Trial of Style Token"] = 1379,
+	["Brawler's Gold"] = 1299,
 
 	-- Burning Crusade
-	["SpiritShard"] = 1704,
+	["Spirit Shard"] = 1704,
 
 	-- Wrath of the Lich King
-	["ChampionsSeal"] = 241,
+	["Champion's Seal"] = 241,
 
 	-- Cataclysm
-	["TolBaradCommendation"] = 391,
-	["MarkOfTheWorldTree"] = 416,
-	["MoteOfDarkness"] = 614,
-	["EssenceOfCorruptedDeathwing"] = 615,
+	["Tol Barad Commendation"] = 391,
+	["Mark of the World Tree"] = 416,
+	["Mote of Darkness"] = 614,
+	["Essence of Corrupted Deathwing"] = 615,
 
 	-- Mists of Pandaria
-	["TimelessCoin"] = 777,
+	["Timeless Coin"] = 777,
 
 	-- Warlords of Draenor
-	["ApexisCrystal"] = 823,
+	["Apexis Crystal"] = 823,
 
 	-- Legion
-	["CuriousCoin"] = 1275,
-	["SightlessEye"] = 1149,
-	["AncientMana"] = 1155,
+	["Curious Coin"] = 1275,
+	["Sightless Eye"] = 1149,
+	["Ancient Mana"] = 1155,
 	["Nethershard"] = 1226,
-	["LegionfallWarSupplies"] = 1342,
-	["VeiledArgunite"] = 1508,
-	["WakeningEssence"] = 1533,
+	["Legionfall War Supplies"] = 1342,
+	["Veiled Argunite"] = 1508,
+	["Wakening Essence"] = 1533,
 
 	-- Battle for Azeroth
-	["SeafarersDubloon"] = 1710,
-	["7thLegionServiceMedal"] = 1717,
-	["HonorboundServiceMedal"] = 1716,
-	["PrismaticManapearl"] = 1721,
-	["TitanResiduum"] = 1718,
-	["CoalescingVisions"] = 1755,
-	["CorruptedMemento"] = 1744,
-	["EchoesOfNyalotha"] = 1803,
+	["Seafarer's Dubloon"] = 1710,
+	["7th Legion Service Medal"] = 1717,
+	["Honorbound Service Medal"] = 1716,
+	["Prismatic Manapearl"] = 1721,
+	["Titan Residuum"] = 1718,
+	["Coalescing Visions"] = 1755,
+	["Corrupted Memento"] = 1744,
+	["Echoes of Nyalotha"] = 1803,
 
 	-- Shadowlands
-	["GratefulOffering"] = 1885,
-	["RedeemedSoul"] = 1810,
+	["Grateful Offering"] = 1885,
+	["Redeemed Soul"] = 1810,
 	["Stygia"] = 1767,
-	["InfusedRuby"] = 1820,
-	["SinstoneFragments"] = 1816,
-	["MedallionOfService"] = 1819,
-	["CatalogedResearch"] = 1931,
-	["SoulAsh"] = 1828,
-	["SoulCinders"] = 1906,
-	["StygianEmber"] = 1977,
+	["Infused Ruby"] = 1820,
+	["Sinstone Fragments"] = 1816,
+	["Medallion of Service"] = 1819,
+	["Cataloged Research"] = 1931,
+	["Soul Ash"] = 1828,
+	["Soul Cinders"] = 1906,
+	["Cosmic Flux"] = 2009,
+	["Cyphers of the First Ones"] = 1979,
 
 	-- Cooking
-	["EpicureansAward"] = 81,
-	["IronpawToken"] = 402,
+	["Epicurean's Award"] = 81,
+	["Ironpaw Token"] = 402,
 
 	-- Jewelcrafting
-	["DalaranJewelcraftersToken"] = 61,
-	["IllustriousJewelcraftersToken"] = 361,
+	["Dalaran Jewelcrafter's Token"] = 61,
+	["Illustrious Jewelcrafter's Token"] = 361,
 
 	-- Pick Pocketing
-	["DingyIronCoins"] = 980,
-	["CoinsOfAir"] = 1416,
+	["Dingy Iron Coins"] = 980,
+	["Coins of Air"] = 1416,
 }
 
 local items = {
 	-- Legion
-	["BloodOfSargeras"] = 124124,
+	["Blood of Sargeras"] = 124124,
 
 	-- PvP
-	["MarkOfHonor"] = 137642,
+	["Mark of Honor"] = 137642,
 
 	-- Battle Pets
-	["PolishedPetCharm"] = 163036,
-	["ShinyPetCharm"] = 116415,
+	["Polished Pet Charm"] = 163036,
+	["Shiny Pet Charm"] = 116415,
 }
 
 
@@ -156,10 +157,6 @@ local function updateData()
 			profession, professionIcon = prof2Name, prof2Icon
 		end
 
-		if professionIcon == 136247 then
-			professionIcon = 133611 -- Fix incorrect Leatherworking icon
-		end
-
 
 		ArmyDB[name.."-"..realm] = {
 			["Name"] = name,
@@ -167,19 +164,22 @@ local function updateData()
 			["Faction"] = faction,
 			["Class"] = class,
 			["Money"] = GetMoney() or 0,
-			["LootSpec"] = GetLootSpecialization() or 0,
+			["Specialization"] = GetLootSpecialization() or 0,
 			["Profession"] = profession,
-			["ProfessionIcon"] = professionIcon,
+			["Covenant"] = C_Covenants and C_Covenants.GetActiveCovenantID() or 0,
+			["Renown"] = C_CovenantSanctumUI and C_CovenantSanctumUI.GetRenownLevel() or 1,
+			["Currencies"] = {},
+			["Items"] = {},
 		}
 
 		for currencyName, currencyID in pairs(currencies) do
 			local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencyID) or {}
-			ArmyDB[name.."-"..realm][currencyName] = currencyInfo["quantity"] or 0
+			ArmyDB[name.."-"..realm]["Currencies"][currencyName] = currencyInfo["quantity"] or 0
 		end
 
 		for itemName, itemID in pairs(items) do
 			local amount = GetItemCount(itemID, true)
-			ArmyDB[name.."-"..realm][itemName] = amount or 0
+			ArmyDB[name.."-"..realm]["Items"][itemName] = amount or 0
 		end
 	end
 end
@@ -206,10 +206,8 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		local name = currencyInfo["name"] or "Unknown"
 		local icon = currencyInfo["iconFileID"] or 0
 
-		for k, v in pairs(ArmyDB) do
-			local c = ArmyDB[k]
-
-			currencyTable[k] = c[currencyName] or 0
+		for character in pairs(ArmyDB) do
+			currencyTable[character] = ArmyDB[character].Currencies[currencyName] or 0
 		end
 
 		-- Sort the table
@@ -228,10 +226,8 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		local itemTable = {}
 		local name, icon = GetSimpleItemInfo(items[itemName])
 
-		for k, v in pairs(ArmyDB) do
-			local c = ArmyDB[k]
-
-			itemTable[k] = c[itemName] or 0
+		for character in pairs(ArmyDB) do
+			itemTable[character] = ArmyDB[character].Items[itemName] or 0
 		end
 
 		-- Sort the table
@@ -292,7 +288,7 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		-- Sort the table
 		local sortedCurrencyTable = getKeysSortedByValue(currencyTable, function(a, b) return a > b end)
 
-		DEFAULT_CHAT_FRAME:AddMessage("---")
+		DEFAULT_CHAT_FRAME:AddMessage(" ")
 		DEFAULT_CHAT_FRAME:AddMessage("|TInterface/MoneyFrame/UI-GoldIcon:14:14|t Gold (Connected " .. realm .. ")")
 
 		for i, k in ipairs(sortedCurrencyTable) do
@@ -301,7 +297,7 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 			end
 		end
 		
-		DEFAULT_CHAT_FRAME:AddMessage("---")
+		DEFAULT_CHAT_FRAME:AddMessage(" ")
 		DEFAULT_CHAT_FRAME:AddMessage("Connected " .. realm .. ":  " .. FormatLargeNumber(floor(realmMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
 		DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(floor(totalMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
 	end
