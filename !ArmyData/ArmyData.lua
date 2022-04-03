@@ -297,7 +297,6 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 			end
 		end
 		
-		DEFAULT_CHAT_FRAME:AddMessage(" ")
 		DEFAULT_CHAT_FRAME:AddMessage("Connected " .. realm .. ":  " .. FormatLargeNumber(floor(realmMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
 		DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(floor(totalMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
 	end
