@@ -113,6 +113,9 @@ local items = {
 	-- Battle Pets
 	["Polished Pet Charm"] = 163036,
 	["Shiny Pet Charm"] = 116415,
+
+	-- Protoform Synthesis
+	["Genesis Mote"] = 188957,
 }
 
 
@@ -190,6 +193,7 @@ function GetSimpleItemInfo(id)
 	elseif id == 137642 then return "|cff0070ddMark of Honor|r", 1322720
 	elseif id == 116415 then return "Shiny Pet Charm", 413584
 	elseif id == 163036 then return "Polished Pet Charm", 2004597
+	elseif id == 188957 then return "|cff1eff00Genesis Mote|r", 4287471
 	else return id, 134400
 	end
 end
