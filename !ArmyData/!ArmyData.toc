@@ -1,6 +1,6 @@
-## Interface: 90200
+## Interface: 90205
 ## Title: Army Data
-## Version: 9.2.0
+## Version: 9.2.5
 ## Notes: Stores data for your Army of Alts
 ## Author: Leo
 
