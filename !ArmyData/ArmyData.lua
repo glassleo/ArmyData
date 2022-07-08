@@ -209,9 +209,11 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencies[currencyName]) or {}
 		local name = currencyInfo["name"] or "Unknown"
 		local icon = currencyInfo["iconFileID"] or 0
+		local total = 0
 
 		for character in pairs(ArmyDB) do
 			currencyTable[character] = ArmyDB[character].Currencies[currencyName] or 0
+			total = total + currencyTable[character]
 		end
 
 		-- Sort the table
@@ -221,17 +223,21 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		DEFAULT_CHAT_FRAME:AddMessage("|T" .. icon .. ":0|t " .. name)
 
 		for i, k in ipairs(sortedCurrencyTable) do
-			if i <= 7 then
+			if i <= 6 then
 				DEFAULT_CHAT_FRAME:AddMessage(i .. " - " .. k .. ": " .. FormatLargeNumber(currencyTable[k] or 0))
 			end
 		end
+
+		DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(total))
 	elseif items[msg] then
 		local itemName = msg
 		local itemTable = {}
 		local name, icon = GetSimpleItemInfo(items[itemName])
+		local total = 0
 
 		for character in pairs(ArmyDB) do
 			itemTable[character] = ArmyDB[character].Items[itemName] or 0
+			total = total + itemTable[character]
 		end
 
 		-- Sort the table
@@ -241,10 +247,12 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		DEFAULT_CHAT_FRAME:AddMessage("|T" .. icon .. ":0|t " .. name)
 
 		for i, k in ipairs(sortedItemTable) do
-			if i <= 7 then
+			if i <= 6 then
 				DEFAULT_CHAT_FRAME:AddMessage(i .. " - " .. k .. ": " .. FormatLargeNumber(itemTable[k] or 0))
 			end
 		end
+
+		DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(total))
 	else
 		local totalMoney, realmMoney = 0, 0
 		local faction,_ = UnitFactionGroup("player")
