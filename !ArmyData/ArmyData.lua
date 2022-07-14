@@ -104,8 +104,14 @@ local currencies = {
 }
 
 local items = {
-	-- Legion
+	-- Crafting
+	["Primal Spirit"] = 120945,
 	["Blood of Sargeras"] = 124124,
+	["Expulsom"] = 152668,
+	["Hydrocore"] = 162460,
+	["Tidalcore"] = 165948,
+	["Breath of Bwonsamdi"] = 165703,
+	["Sanguicell"] = 162461,
 
 	-- PvP
 	["Mark of Honor"] = 137642,
@@ -190,6 +196,12 @@ end
 
 function GetSimpleItemInfo(id)
 	if id == 124124 then return "|cff0070ddBlood of Sargeras|r", 1417744
+	elseif id == 120945 then return "|cff1eff00Primal Spirit|r", 1044088
+	elseif id == 162461 then return "|cffa335eeSanguicell|r", 876915
+	elseif id == 165703 then return "|cffa335eeBreath of Bwonsamdi|r", 2442247
+	elseif id == 162460 then return "|cff0070ddHydrocore|r", 1020349
+	elseif id == 165948 then return "|cff0070ddTidalcore|r", 1020350
+	elseif id == 152668 then return "|cff0070ddExpulsom|r", 2065568
 	elseif id == 137642 then return "|cff0070ddMark of Honor|r", 1322720
 	elseif id == 116415 then return "Shiny Pet Charm", 413584
 	elseif id == 163036 then return "Polished Pet Charm", 2004597
