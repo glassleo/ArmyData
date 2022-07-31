@@ -122,6 +122,9 @@ local items = {
 
 	-- Protoform Synthesis
 	["Genesis Mote"] = 188957,
+
+	-- Misc
+	["Sandworn Relic"] = 190189,
 }
 
 
@@ -206,6 +209,7 @@ function GetSimpleItemInfo(id)
 	elseif id == 116415 then return "Shiny Pet Charm", 413584
 	elseif id == 163036 then return "Polished Pet Charm", 2004597
 	elseif id == 188957 then return "|cff1eff00Genesis Mote|r", 4287471
+	elseif id == 190189 then return "|cffa335eeSandworn Relic|r", 519378
 	else return id, 134400
 	end
 end
