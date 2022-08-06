@@ -1,4 +1,18 @@
 SLASH_ARMYDATA1 = "/army"
+SLASH_ARMYDATA2 = "/a"
+ArmyData = LibStub("AceAddon-3.0"):NewAddon("ArmyData", "AceConsole-3.0", "AceEvent-3.0")
+local AceGUI = LibStub("AceGUI-3.0")
+
+OutputFrame = AceGUI:Create("Frame")
+OutputFrame:SetLayout("Fill")
+local OutputGroup = AceGUI:Create("SimpleGroup")
+OutputGroup:SetFullWidth(true)
+OutputGroup:SetFullHeight(true)
+OutputGroup:SetLayout("Fill")
+OutputFrame:AddChild(OutputGroup)
+OutputFrame:Hide()
+local Scroll
+local ScrollStatus = false
 
 local frame = CreateFrame("FRAME", "ArmyData")
 
@@ -127,7 +141,61 @@ local items = {
 	["Sandworn Relic"] = 190189,
 }
 
-
+-- https://wow.tools/dbc/?dbc=mapchallengemode
+local ChallengeMap = {
+	[2] = "Temple of the Jade Serpent",
+	[56] = "Stormstout Brewery",
+	[57] = "Gate of the Setting Sun",
+	[58] = "Shado-Pan Monastery",
+	[59] = "Siege of Niuzao Temple",
+	[60] = "Mogu'shan Palace",
+	[76] = "Scholomance",
+	[77] = "Scarlet Halls",
+	[78] = "Scarlet Monastery",
+	[161] = "Skyreach",
+	[163] = "Bloodmaul Slag Mines",
+	[164] = "Auchindoun",
+	[165] = "Shadowmoon Burial Grounds",
+	[166] = "Grimrail Depot",
+	[167] = "Upper Blackrock Spire",
+	[168] = "The Everbloom",
+	[169] = "Iron Docks",
+	[197] = "Eye of Azshara",
+	[198] = "Darkheart Thicket",
+	[199] = "Black Rook Hold",
+	[200] = "Halls of Valor",
+	[206] = "Neltharion's Lair",
+	[207] = "Vault of the Wardens",
+	[208] = "Maw of Souls",
+	[209] = "The Arcway",
+	[210] = "Court of Stars",
+	[227] = "Return to Karazhan: Lower",
+	[233] = "Cathedral of Eternal Night",
+	[234] = "Return to Karazhan: Upper",
+	[239] = "Seat of the Triumvirate",
+	[244] = "Atal'Dazar",
+	[245] = "Freehold",
+	[246] = "Tol Dagor",
+	[247] = "The MOTHERLODE!!",
+	[248] = "Waycrest Manor",
+	[249] = "Kings' Rest",
+	[250] = "Temple of Sethraliss",
+	[251] = "The Underrot",
+	[252] = "Shrine of the Storm",
+	[353] = "Siege of Boralus",
+	[369] = "Operation: Mechagon - Junkyard",
+	[370] = "Operation: Mechagon - Workshop",
+	[375] = "Mists of Tirna Scithe",
+	[376] = "The Necrotic Wake",
+	[377] = "De Other Side",
+	[378] = "Halls of Atonement",
+	[379] = "Plaguefall",
+	[380] = "Sanguine Depths",
+	[381] = "Spires of Ascension",
+	[382] = "Theater of Pain",
+	[391] = "Tazavesh: Streets of Wonder",
+	[392] = "Tazavesh: So'leah's Gambit",
+}
 
 local function getKeysSortedByValue(tbl, sortFunction)
 	local keys = {}
@@ -141,7 +209,6 @@ local function getKeysSortedByValue(tbl, sortFunction)
 
 	return keys
 end
-
 
 local function updateData()
 	local name = UnitName("player")
@@ -180,6 +247,8 @@ local function updateData()
 			["Profession"] = profession,
 			["Covenant"] = C_Covenants and C_Covenants.GetActiveCovenantID() or 0,
 			["Renown"] = C_CovenantSanctumUI and C_CovenantSanctumUI.GetRenownLevel() or 1,
+			["KeystoneMap"] = ChallengeMap[C_MythicPlus.GetOwnedKeystoneChallengeMapID() or 0] or C_MythicPlus.GetOwnedKeystoneChallengeMapID() or nil,
+			["KeystoneLevel"] = C_MythicPlus.GetOwnedKeystoneLevel() or 0,
 			["Currencies"] = {},
 			["Items"] = {},
 		}
@@ -216,10 +285,64 @@ end
 
 
 -- Slash Commands
-function SlashCmdList.ARMYDATA(msg, editbox)
+function SlashCmdList.ARMYDATA(msg, ...)
 	updateData()
 
-	if currencies[msg] then
+	if ScrollStatus then
+		AceGUI:Release(Scroll)
+		ScrollStatus = false
+	end
+
+	if(msg == "key" or msg == "keys" or msg == "keystone" or msg == "keystones" or msg == "m+") then
+		local itemTable = {}
+		local icon = 4352494
+		local total = 0
+
+		for character in pairs(ArmyDB) do
+			itemTable[character] = ArmyDB[character].KeystoneLevel or 0
+			total = total + itemTable[character]
+		end
+
+		-- Sort the table
+		local sortedItemTable = getKeysSortedByValue(itemTable, function(a, b) return a > b end)
+
+		OutputFrame:SetTitle("|T" .. icon .. ":0|t |cffa335eeMythic Keystones|r")
+
+		if ScrollStatus then AceGUI:Release(Scroll) end
+		Scroll = AceGUI:Create("ScrollFrame")
+		Scroll:SetLayout("Flow")
+		ScrollStatus = true
+		OutputGroup:AddChild(Scroll)
+
+		for i, k in ipairs(sortedItemTable) do
+			if tonumber(ArmyDB[k]["KeystoneLevel"] or 0) > 0 then
+				local level = itemTable[k] or 0
+
+				local Label = AceGUI:Create("Label")
+				Label:SetText((level > 0 and ("+" .. level) or ""))
+				Label:SetRelativeWidth(0.1)
+				Label:SetFontObject("GameFontNormal")
+				Scroll:AddChild(Label)
+
+				local Label = AceGUI:Create("Label")
+				Label:SetText((level > 0 and (ArmyDB[k]["KeystoneMap"]) or "|cff595959No Keystone|r"))
+				Label:SetRelativeWidth(0.5)
+				Label:SetFontObject("GameFontNormal")
+				Scroll:AddChild(Label)
+
+				local Label = AceGUI:Create("Label")
+				Label:SetText("|c" .. RAID_CLASS_COLORS[ArmyDB[k]["Class"]].colorStr .. ArmyDB[k]["Name"] .. "  |cff595959" .. ArmyDB[k]["Realm"] .. "|r")
+				Label:SetRelativeWidth(0.4)
+				Label:SetFontObject("GameFontNormal")
+				Scroll:AddChild(Label)
+			end
+		end
+
+		OutputFrame:SetStatusText("")
+		OutputFrame:SetWidth(600)
+		OutputFrame:SetHeight(520)
+		OutputFrame:Show()
+	elseif currencies[msg] then
 		local currencyName = msg
 		local currencyTable = {}
 		local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencies[currencyName]) or {}
@@ -235,16 +358,34 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		-- Sort the table
 		local sortedCurrencyTable = getKeysSortedByValue(currencyTable, function(a, b) return a > b end)
 
-		DEFAULT_CHAT_FRAME:AddMessage("---")
-		DEFAULT_CHAT_FRAME:AddMessage("|T" .. icon .. ":0|t " .. name)
+		OutputFrame:SetTitle("|T" .. icon .. ":0|t " .. name)
+
+		if ScrollStatus then AceGUI:Release(Scroll) end
+		Scroll = AceGUI:Create("ScrollFrame")
+		Scroll:SetLayout("Flow")
+		ScrollStatus = true
+		OutputGroup:AddChild(Scroll)
 
 		for i, k in ipairs(sortedCurrencyTable) do
-			if i <= 6 then
-				DEFAULT_CHAT_FRAME:AddMessage(i .. " - " .. k .. ": " .. FormatLargeNumber(currencyTable[k] or 0))
-			end
+			local amount = currencyTable[k] or 0
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText("|T" .. icon .. ":0|t " .. (amount > 0 and FormatLargeNumber(amount) or "|cff5959590|r"))
+			Label:SetRelativeWidth(0.3)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText("|c" .. RAID_CLASS_COLORS[ArmyDB[k]["Class"]].colorStr .. ArmyDB[k]["Name"] .. "  |cff595959" .. ArmyDB[k]["Realm"] .. "|r")
+			Label:SetRelativeWidth(0.7)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
 		end
 
-		DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(total))
+		OutputFrame:SetStatusText("Account Total:  |T" .. icon .. ":0|t " .. FormatLargeNumber(total))
+		OutputFrame:SetWidth(450)
+		OutputFrame:SetHeight(520)
+		OutputFrame:Show()
 	elseif items[msg] then
 		local itemName = msg
 		local itemTable = {}
@@ -259,16 +400,34 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		-- Sort the table
 		local sortedItemTable = getKeysSortedByValue(itemTable, function(a, b) return a > b end)
 
-		DEFAULT_CHAT_FRAME:AddMessage("---")
-		DEFAULT_CHAT_FRAME:AddMessage("|T" .. icon .. ":0|t " .. name)
+		OutputFrame:SetTitle("|T" .. icon .. ":0|t " .. name)
+
+		if ScrollStatus then AceGUI:Release(Scroll) end
+		Scroll = AceGUI:Create("ScrollFrame")
+		Scroll:SetLayout("Flow")
+		ScrollStatus = true
+		OutputGroup:AddChild(Scroll)
 
 		for i, k in ipairs(sortedItemTable) do
-			if i <= 6 then
-				DEFAULT_CHAT_FRAME:AddMessage(i .. " - " .. k .. ": " .. FormatLargeNumber(itemTable[k] or 0))
-			end
+			local amount = itemTable[k] or 0
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText("|T" .. icon .. ":0|t " .. (amount > 0 and FormatLargeNumber(amount) or "|cff5959590|r"))
+			Label:SetRelativeWidth(0.3)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText("|c" .. RAID_CLASS_COLORS[ArmyDB[k]["Class"]].colorStr .. ArmyDB[k]["Name"] .. "  |cff595959" .. ArmyDB[k]["Realm"] .. "|r")
+			Label:SetRelativeWidth(0.7)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
 		end
 
-		DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(total))
+		OutputFrame:SetStatusText("Account Total:  |T" .. icon .. ":0|t " .. FormatLargeNumber(total))
+		OutputFrame:SetWidth(450)
+		OutputFrame:SetHeight(520)
+		OutputFrame:Show()
 	else
 		local totalMoney, realmMoney = 0, 0
 		local faction,_ = UnitFactionGroup("player")
@@ -316,17 +475,34 @@ function SlashCmdList.ARMYDATA(msg, editbox)
 		-- Sort the table
 		local sortedCurrencyTable = getKeysSortedByValue(currencyTable, function(a, b) return a > b end)
 
-		DEFAULT_CHAT_FRAME:AddMessage(" ")
-		DEFAULT_CHAT_FRAME:AddMessage("|TInterface/MoneyFrame/UI-GoldIcon:14:14|t Gold (Connected " .. realm .. ")")
+		OutputFrame:SetTitle("|TInterface/MoneyFrame/UI-GoldIcon:14:14|t Gold")
+
+		if ScrollStatus then AceGUI:Release(Scroll) end
+		Scroll = AceGUI:Create("ScrollFrame")
+		Scroll:SetLayout("Flow")
+		ScrollStatus = true
+		OutputGroup:AddChild(Scroll)
 
 		for i, k in ipairs(sortedCurrencyTable) do
-			if i <= 5 then
-				DEFAULT_CHAT_FRAME:AddMessage(i .. " - " .. k .. ": " .. (currencyTable[k] >= 100000 and FormatLargeNumber(floor((currencyTable[k]) / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t" or GetCoinTextureString(currencyTable[k] or 0)))
-			end
+			local Label = AceGUI:Create("Label")
+			Label:SetText((currencyTable[k] >= 100000 and FormatLargeNumber(floor((currencyTable[k]) / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t" or GetCoinTextureString(currencyTable[k] or 0)))
+			Label:SetRelativeWidth(0.3)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText("|c" .. RAID_CLASS_COLORS[ArmyDB[k]["Class"]].colorStr .. ArmyDB[k]["Name"] .. "  |cff595959" .. ArmyDB[k]["Realm"] .. "|r")
+			Label:SetRelativeWidth(0.7)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
 		end
-		
-		DEFAULT_CHAT_FRAME:AddMessage("Connected " .. realm .. ":  " .. FormatLargeNumber(floor(realmMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
-		DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(floor(totalMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
+
+		OutputFrame:SetStatusText("Connected " .. realm .. ":  " .. FormatLargeNumber(floor(realmMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
+		OutputFrame:SetWidth(450)
+		OutputFrame:SetHeight(520)
+		OutputFrame:Show()
+
+		--DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(floor(totalMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
 	end
 end
 
