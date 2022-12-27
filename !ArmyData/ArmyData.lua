@@ -210,7 +210,7 @@ local function getKeysSortedByValue(tbl, sortFunction)
 	return keys
 end
 
-local function updateData()
+local function UpdateData()
 	local name = UnitName("player")
 	local realm = GetRealmName()
 	local _, class, _ = UnitClass("player")
@@ -251,6 +251,10 @@ local function updateData()
 			["KeystoneLevel"] = C_MythicPlus.GetOwnedKeystoneLevel() or 0,
 			["Currencies"] = {},
 			["Items"] = {},
+			["RenewedProtoDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["RenewedProtoDrake"] or 5,
+			["WindborneVelocidrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindborneVelocidrake"] or 4,
+			["HighlandDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["HighlandDrake"] or 2,
+			["CliffsideWylderdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["CliffsideWylderdrake"] or 5,
 		}
 
 		for currencyName, currencyID in pairs(currencies) do
@@ -262,6 +266,18 @@ local function updateData()
 			local amount = GetItemCount(itemID, true)
 			ArmyDB[name.."-"..realm]["Items"][itemName] = amount or 0
 		end
+	end
+end
+
+local function UpdateSpecificData(key, value)
+	local name = UnitName("player")
+	local realm = GetRealmName()
+
+	if ArmyDB and ArmyDB[name.."-"..realm] then
+		ArmyDB[name.."-"..realm][key] = value
+		if ZA then ZA_UpdateData() end
+	else
+		print("Could not update character data:", key, value)
 	end
 end
 
@@ -284,9 +300,58 @@ function GetSimpleItemInfo(id)
 end
 
 
+-- Dragonriding Customization
+local barber = CreateFrame("FRAME", "AutomagicBarbershopFrame")
+barber:RegisterEvent("BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE")
+barber:RegisterEvent("BARBER_SHOP_CLOSE")
+barber:RegisterEvent("BARBER_SHOP_APPEARANCE_APPLIED")
+barber:RegisterEvent("BARBER_SHOP_RESULT")
+
+local function BarberHandler(self, event)
+	if event == "BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE" then
+		local customizationData = C_BarberShop.GetAvailableCustomizations()
+
+		if customizationData then
+			for _, categoryData in ipairs(customizationData) do
+		        --if categoryData.chrModelID then
+		            --print("chrModelID:", categoryData.chrModelID, " name:", categoryData.name)
+		            local options = categoryData.options
+
+		            for _, data in ipairs(options) do
+		            	--print(categoryData.name, " ID:", data.id, " name:", data.name, " currentChoiceIndex:", data.currentChoiceIndex)
+		            	local id, choice = data.id, data.currentChoiceIndex
+
+		            	-- https://wow.tools/dbc/?dbc=chrcustomizationoption&build=10.0.2.45632#page=1&colFilter[0]=skin%20color&colFilter[4]=124
+		            	-- 124 = Renewed Proto-Drake
+		            	-- 129 = Windborne Velocidrake
+		            	-- 123 = Highland Drake
+		            	-- 126 = Cliffside Wylderdrake
+		            	if id == 1611 then -- Renewed Proto-Drake: Skin Color
+		            		--print("Renewed Proto-Drake -", data.name, choice)
+		            		UpdateSpecificData("RenewedProtoDrake", choice)
+		            	elseif id == 1733 then -- Windborne Velocidrake: Skin Color
+		            		--print("Windborne Velocidrake -", data.name, choice)
+		            		UpdateSpecificData("WindborneVelocidrake", choice)
+		            	elseif id == 1609 then -- Highland Drake: Skin Color
+		            		--print("Highland Drake -", data.name, choice)
+		            		UpdateSpecificData("HighlandDrake", choice)
+		            	elseif id == 1615 then -- Cliffside Wylderdrake: Skin Color
+		            		--print("Cliffside Wylderdrake -", data.name, choice)
+		            		UpdateSpecificData("CliffsideWylderdrake", choice)
+		            	end
+		            end
+		        --end
+		    end
+		end
+	end
+end
+
+barber:SetScript("OnEvent", BarberHandler)
+
+
 -- Slash Commands
 function SlashCmdList.ARMYDATA(msg, ...)
-	updateData()
+	UpdateData()
 
 	if ScrollStatus then
 		AceGUI:Release(Scroll)
@@ -512,7 +577,7 @@ local function eventHandler(self, event)
 		-- Make sure defaults are set
 		if not ArmyDB then ArmyDB = { } end
 	else
-		updateData()
+		UpdateData()
 	end
 end
 
