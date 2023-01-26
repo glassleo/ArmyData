@@ -195,6 +195,14 @@ local ChallengeMap = {
 	[382] = "Theater of Pain",
 	[391] = "Tazavesh: Streets of Wonder",
 	[392] = "Tazavesh: So'leah's Gambit",
+	[399] = "Ruby Life Pools",
+	[400] = "The Nokhud Offensive",
+	[401] = "The Azure Vault",
+	[402] = "Algeth'ar Academy",
+	[403] = "Uldaman: Legacy of Tyr",
+	[404] = "Neltharus",
+	[405] = "Brackenhide Hollow",
+	[406] = "Halls of Infusion",
 }
 
 local function getKeysSortedByValue(tbl, sortFunction)
@@ -247,7 +255,7 @@ local function UpdateData()
 			["Profession"] = profession,
 			["Covenant"] = C_Covenants and C_Covenants.GetActiveCovenantID() or 0,
 			["Renown"] = C_CovenantSanctumUI and C_CovenantSanctumUI.GetRenownLevel() or 1,
-			["KeystoneMap"] = ChallengeMap[C_MythicPlus.GetOwnedKeystoneChallengeMapID() or 0] or C_MythicPlus.GetOwnedKeystoneChallengeMapID() or nil,
+			["KeystoneMap"] = C_MythicPlus.GetOwnedKeystoneChallengeMapID() or nil,
 			["KeystoneLevel"] = C_MythicPlus.GetOwnedKeystoneLevel() or 0,
 			["Currencies"] = {},
 			["Items"] = {},
@@ -390,7 +398,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				Scroll:AddChild(Label)
 
 				local Label = AceGUI:Create("Label")
-				Label:SetText((level > 0 and (ArmyDB[k]["KeystoneMap"]) or "|cff595959No Keystone|r"))
+				Label:SetText((level > 0 and (ChallengeMap[ArmyDB[k]["KeystoneMap"]] or ArmyDB[k]["KeystoneMap"]) or "|cff595959No Keystone|r"))
 				Label:SetRelativeWidth(0.5)
 				Label:SetFontObject("GameFontNormal")
 				Scroll:AddChild(Label)
