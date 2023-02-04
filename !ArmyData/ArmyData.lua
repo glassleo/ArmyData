@@ -51,7 +51,6 @@ local currencies = {
 	-- Events
 	["Timewarped Badge"] = 1166,
 	["Darkmoon Prize Ticket"] = 515,
-	["Trial of Style Token"] = 1379,
 	["Brawler's Gold"] = 1299,
 
 	-- Burning Crusade
@@ -126,6 +125,10 @@ local items = {
 	["Tidalcore"] = 165948,
 	["Breath of Bwonsamdi"] = 165703,
 	["Sanguicell"] = 162461,
+
+	-- Events
+	["Coin of Ancestry"] = 21100,
+	["Trial of Style Token"] = 151134,
 
 	-- PvP
 	["Mark of Honor"] = 137642,
@@ -303,6 +306,8 @@ function GetSimpleItemInfo(id)
 	elseif id == 163036 then return "Polished Pet Charm", 2004597
 	elseif id == 188957 then return "|cff1eff00Genesis Mote|r", 4287471
 	elseif id == 190189 then return "|cffa335eeSandworn Relic|r", 519378
+	elseif id == 21100 then return "Coin of Ancestry", 133858
+	elseif id == 151134 then return "|cff1eff00Trial of Style Token|r", 1500867
 	else return id, 134400
 	end
 end
