@@ -125,6 +125,7 @@ local items = {
 	["Tidalcore"] = 165948,
 	["Breath of Bwonsamdi"] = 165703,
 	["Sanguicell"] = 162461,
+	["Primal Chaos"] = 190454,
 
 	-- Events
 	["Coin of Ancestry"] = 21100,
@@ -308,6 +309,7 @@ function GetSimpleItemInfo(id)
 	elseif id == 190189 then return "|cffa335eeSandworn Relic|r", 519378
 	elseif id == 21100 then return "Coin of Ancestry", 133858
 	elseif id == 151134 then return "|cff1eff00Trial of Style Token|r", 1500867
+	elseif id == 190454 then return "|cffa335eePrimal Chaos|r", 4643980
 	else return id, 134400
 	end
 end
