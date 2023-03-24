@@ -1,6 +1,6 @@
-## Interface: 100005
+## Interface: 100007
 ## Title: Army Data
-## Version: 10.0.5
+## Version: 10.0.7
 ## Notes: Stores data for your Army of Alts
 ## Author: Leo
 
