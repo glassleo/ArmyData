@@ -30,6 +30,7 @@ local currencies = {
 	["Order Resources"] = 1220,
 	["War Resources"] = 1560,
 	["Reservoir Anima"] = 1813,
+	["Dragon Isles Supplies"] = 2003,
 
 	-- Dungeon and Raid
 	["Valor"] = 1191,
@@ -103,6 +104,10 @@ local currencies = {
 	["Cosmic Flux"] = 2009,
 	["Cyphers of the First Ones"] = 1979,
 
+	-- Dragonflight
+	["Elemental Overflow"] = 2118,
+	["Storm Sigil"] = 2122,
+
 	-- Cooking
 	["Epicurean's Award"] = 81,
 	["Ironpaw Token"] = 402,
@@ -145,7 +150,7 @@ local items = {
 	["Sandworn Relic"] = 190189,
 }
 
--- https://wow.tools/dbc/?dbc=mapchallengemode
+-- https://wago.tools/db2/MapChallengeMode?sort[ID]=desc
 local ChallengeMap = {
 	[2] = "Temple of the Jade Serpent",
 	[56] = "Stormstout Brewery",
@@ -207,6 +212,7 @@ local ChallengeMap = {
 	[404] = "Neltharus",
 	[405] = "Brackenhide Hollow",
 	[406] = "Halls of Infusion",
+	[438] = "The Vortex Pinnacle",
 }
 
 local function getKeysSortedByValue(tbl, sortFunction)
