@@ -273,6 +273,7 @@ local function UpdateData()
 			["WindborneVelocidrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindborneVelocidrake"] or 4,
 			["HighlandDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["HighlandDrake"] or 2,
 			["CliffsideWylderdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["CliffsideWylderdrake"] or 5,
+			["WindingSlitherdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrake"] or 1,
 		}
 
 		for currencyName, currencyID in pairs(currencies) do
@@ -359,6 +360,9 @@ local function BarberHandler(self, event)
 		            	elseif id == 1615 then -- Cliffside Wylderdrake: Skin Color
 		            		--print("Cliffside Wylderdrake -", data.name, choice)
 		            		UpdateSpecificData("CliffsideWylderdrake", choice)
+		            	elseif id == 1613 then -- Winding Slitherdrake: Skin Color
+		            		--print("Winding Slitherdrake -", data.name, choice)
+		            		UpdateSpecificData("WindingSlitherdrake", choice)
 		            	end
 		            end
 		        --end
