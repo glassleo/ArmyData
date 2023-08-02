@@ -383,6 +383,11 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		ScrollStatus = false
 	end
 
+	local keyword, options = nil, nil
+	if msg then
+		keyword, options = strsplit(" ", msg, 2)
+	end
+
 	if(msg == "key" or msg == "keys" or msg == "keystone" or msg == "keystones" or msg == "m+") then
 		local itemTable = {}
 		local icon = 4352494
