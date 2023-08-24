@@ -33,7 +33,7 @@ local currencies = {
 	["Dragon Isles Supplies"] = 2003,
 
 	-- Dungeon and Raid
-	["Valor"] = 1191,
+	["Flightstones"] = 2245,
 
 	-- Player vs. Player
 	["Honor"] = 1792,
@@ -107,6 +107,7 @@ local currencies = {
 	-- Dragonflight
 	["Elemental Overflow"] = 2118,
 	["Storm Sigil"] = 2122,
+	["Paracausal Flakes"] = 2594,
 
 	-- Cooking
 	["Epicurean's Award"] = 81,
