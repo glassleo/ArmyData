@@ -53,6 +53,7 @@ local currencies = {
 	["Timewarped Badge"] = 1166,
 	["Darkmoon Prize Ticket"] = 515,
 	["Brawler's Gold"] = 1299,
+	["Riders of Azeroth Badge"] = 2588,
 
 	-- Burning Crusade
 	["Spirit Shard"] = 1704,
@@ -271,10 +272,15 @@ local function UpdateData()
 			["Currencies"] = {},
 			["Items"] = {},
 			["RenewedProtoDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["RenewedProtoDrake"] or 5,
+			["RenewedProtoDrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["RenewedProtoDrakeTransformation"] or 5,
 			["WindborneVelocidrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindborneVelocidrake"] or 4,
 			["HighlandDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["HighlandDrake"] or 2,
+			["HighlandDrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["HighlandDrakeTransformation"] or 1,
 			["CliffsideWylderdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["CliffsideWylderdrake"] or 5,
 			["WindingSlitherdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrake"] or 1,
+			["WindingSlitherdrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrakeTransformation"] or 1,
+			["GrottoNetherwingDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["GrottoNetherwingDrake"] or 1,
+			["FlourishingWhimsydrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FlourishingWhimsydrake"] or 1,
 		}
 
 		for currencyName, currencyID in pairs(currencies) do
@@ -331,42 +337,51 @@ barber:RegisterEvent("BARBER_SHOP_APPEARANCE_APPLIED")
 barber:RegisterEvent("BARBER_SHOP_RESULT")
 
 local function BarberHandler(self, event)
+	local keys = {
+		-- Skin Color
+		[1611] = "RenewedProtoDrake",
+		[1733] = "WindborneVelocidrake",
+		[1609] = "HighlandDrake",
+		[1615] = "CliffsideWylderdrake",
+		[1613] = "WindingSlitherdrake",
+		[6410] = "GrottoNetherwingDrake",
+		[8648] = "FlourishingWhimsydrake",
+		-- Full Transoformation
+		[2962] = "RenewedProtoDrakeTransformation",
+		[2044] = "HighlandDrakeTransformation",
+		[6397] = "WindingSlitherdrakeTransformation",
+	}
+
 	if event == "BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE" then
 		local customizationData = C_BarberShop.GetAvailableCustomizations()
 
 		if customizationData then
 			for _, categoryData in ipairs(customizationData) do
-		        --if categoryData.chrModelID then
-		            --print("chrModelID:", categoryData.chrModelID, " name:", categoryData.name)
-		            local options = categoryData.options
+	            local options = categoryData.options
 
-		            for _, data in ipairs(options) do
-		            	--print(categoryData.name, " ID:", data.id, " name:", data.name, " currentChoiceIndex:", data.currentChoiceIndex)
-		            	local id, choice = data.id, data.currentChoiceIndex
+	            for _, data in ipairs(options) do
+	            	--print(categoryData.name, " ID:", data.id, " name:", data.name, " currentChoiceIndex:", data.currentChoiceIndex)
+	            	local id, choice = data.id, data.currentChoiceIndex
 
-		            	-- https://wow.tools/dbc/?dbc=chrcustomizationoption&build=10.0.2.45632#page=1&colFilter[0]=skin%20color&colFilter[4]=124
-		            	-- 124 = Renewed Proto-Drake
-		            	-- 129 = Windborne Velocidrake
-		            	-- 123 = Highland Drake
-		            	-- 126 = Cliffside Wylderdrake
-		            	if id == 1611 then -- Renewed Proto-Drake: Skin Color
-		            		--print("Renewed Proto-Drake -", data.name, choice)
-		            		UpdateSpecificData("RenewedProtoDrake", choice)
-		            	elseif id == 1733 then -- Windborne Velocidrake: Skin Color
-		            		--print("Windborne Velocidrake -", data.name, choice)
-		            		UpdateSpecificData("WindborneVelocidrake", choice)
-		            	elseif id == 1609 then -- Highland Drake: Skin Color
-		            		--print("Highland Drake -", data.name, choice)
-		            		UpdateSpecificData("HighlandDrake", choice)
-		            	elseif id == 1615 then -- Cliffside Wylderdrake: Skin Color
-		            		--print("Cliffside Wylderdrake -", data.name, choice)
-		            		UpdateSpecificData("CliffsideWylderdrake", choice)
-		            	elseif id == 1613 then -- Winding Slitherdrake: Skin Color
-		            		--print("Winding Slitherdrake -", data.name, choice)
-		            		UpdateSpecificData("WindingSlitherdrake", choice)
-		            	end
-		            end
-		        --end
+	            	-- https://wago.tools/db2/ChrCustomizationOption?filter[Name_lang]=Skin%20Color&filter[ChrModelID]=124&page=1
+	            	-- 124 = Renewed Proto-Drake
+	            	-- 129 = Windborne Velocidrake
+	            	-- 123 = Highland Drake
+	            	-- 126 = Cliffside Wylderdrake
+	            	-- 125 = Winding Slitherdrake
+	            	-- 149 = Grotto Netherwing Drake
+	            	-- 188 = Flourishing Whimsydrake
+
+	            	--if id == 1611 then -- Renewed Proto-Drake: Skin Color
+	            		--print("Renewed Proto-Drake -", data.name, choice)
+	            		--UpdateSpecificData("RenewedProtoDrake", choice)
+	            	--end
+	            	
+	            	if keys[id] then
+	            		UpdateSpecificData(keys[id], choice)
+	            		print(keys[id], "set to", choice) -- Debug
+	            	end
+	            end
 		    end
 		end
 	end
