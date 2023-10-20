@@ -21,6 +21,8 @@ frame:RegisterEvent("VARIABLES_LOADED")
 frame:RegisterEvent("PLAYER_MONEY")
 frame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 frame:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
+frame:RegisterEvent("WEEKLY_REWARDS_UPDATE")
+frame:RegisterEvent("WEEKLY_REWARDS_ITEM_CHANGED")
 
 
 local currencies = {
@@ -215,6 +217,9 @@ local ChallengeMap = {
 	[405] = "Brackenhide Hollow",
 	[406] = "Halls of Infusion",
 	[438] = "The Vortex Pinnacle",
+	[456] = "Throne of the Tides",
+	[463] = "Dawn of the Infinite: Galakrond's Fall",
+	[464] = "Dawn of the Infinite: Murozond's Rise",
 }
 
 local function getKeysSortedByValue(tbl, sortFunction)
@@ -271,6 +276,8 @@ local function UpdateData()
 			["KeystoneLevel"] = C_MythicPlus.GetOwnedKeystoneLevel() or 0,
 			["Currencies"] = {},
 			["Items"] = {},
+
+			-- Dragonriding
 			["RenewedProtoDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["RenewedProtoDrake"] or 5,
 			["RenewedProtoDrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["RenewedProtoDrakeTransformation"] or 5,
 			["WindborneVelocidrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindborneVelocidrake"] or 4,
@@ -281,6 +288,25 @@ local function UpdateData()
 			["WindingSlitherdrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrakeTransformation"] or 1,
 			["GrottoNetherwingDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["GrottoNetherwingDrake"] or 1,
 			["FlourishingWhimsydrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FlourishingWhimsydrake"] or 1,
+
+			-- Druid
+			["Moonkin"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Moonkin"] or 1,
+			["MoonkinTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["MoonkinTransformation"] or 1,
+
+			-- Warlock
+			["Imp"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Imp"] or 1,
+			["ImpStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["ImpStyle"] or 1,
+			["Voidwalker"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Voidwalker"] or 1,
+			["VoidwalkerStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["VoidwalkerStyle"] or 1,
+			["Infernal"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Infernal"] or 1,
+			["InfernalStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["InfernalStyle"] or 1,
+			["Sayaad"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Sayaad"] or 1,
+			["SayaadStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["SayaadStyle"] or 1,
+			["Doomguard"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Doomguard"] or 1,
+			["Felguard"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Felguard"] or 1,
+			["FelguardStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FelguardStyle"] or 1,
+			["Felhunter"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Felhunter"] or 1,
+			["FelhunterStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FelhunterStyle"] or 1,
 		}
 
 		for currencyName, currencyID in pairs(currencies) do
@@ -328,12 +354,20 @@ function GetSimpleItemInfo(id)
 	end
 end
 
+function ArmyGetKey(key, char)
+	local name = UnitName("player") or ""
+	local realm = GetRealmName() or ""
+	local char = char or name.."-"..realm
+
+	return ArmyDB[char] and ArmyDB[char][key] or nil
+end
+
 
 -- Dragonriding Customization
 local barber = CreateFrame("FRAME", "AutomagicBarbershopFrame")
 barber:RegisterEvent("BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE")
-barber:RegisterEvent("BARBER_SHOP_CLOSE")
-barber:RegisterEvent("BARBER_SHOP_APPEARANCE_APPLIED")
+--barber:RegisterEvent("BARBER_SHOP_CLOSE")
+--barber:RegisterEvent("BARBER_SHOP_APPEARANCE_APPLIED")
 barber:RegisterEvent("BARBER_SHOP_RESULT")
 
 local function BarberHandler(self, event)
@@ -346,13 +380,32 @@ local function BarberHandler(self, event)
 		[1613] = "WindingSlitherdrake",
 		[6410] = "GrottoNetherwingDrake",
 		[8648] = "FlourishingWhimsydrake",
-		-- Full Transoformation
+		-- Full Transformation
 		[2962] = "RenewedProtoDrakeTransformation",
 		[2044] = "HighlandDrakeTransformation",
 		[6397] = "WindingSlitherdrakeTransformation",
+		-- Druid
+		[8654] = "Moonkin",
+		[922]  = "MoonkinTransformation",
+		-- Warlock
+		[3078] = "Imp",
+		[1528] = "ImpStyle",
+		--[8612] = "ImpFlames",
+		[8600] = "Voidwalker",
+		[8598] = "VoidwalkerStyle",
+		[8611] = "Infernal",
+		[8610] = "InfernalStyle",
+		[8607] = "Sayaad",
+		[8605] = "SayaadStyle",
+		[8604] = "Doomguard",
+		--[8603] = "DoomguardStyle" -- Unused
+		[8601] = "Felguard",
+		[8602] = "FelguardStyle",
+		[8475] = "Felhunter",
+		[8474] = "FelhunterStyle",
 	}
 
-	if event == "BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE" then
+	if event == "BARBER_SHOP_RESULT" or event == "BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE" then
 		local customizationData = C_BarberShop.GetAvailableCustomizations()
 
 		if customizationData then
@@ -363,23 +416,43 @@ local function BarberHandler(self, event)
 	            	--print(categoryData.name, " ID:", data.id, " name:", data.name, " currentChoiceIndex:", data.currentChoiceIndex)
 	            	local id, choice = data.id, data.currentChoiceIndex
 
-	            	-- https://wago.tools/db2/ChrCustomizationOption?filter[Name_lang]=Skin%20Color&filter[ChrModelID]=124&page=1
-	            	-- 124 = Renewed Proto-Drake
-	            	-- 129 = Windborne Velocidrake
-	            	-- 123 = Highland Drake
-	            	-- 126 = Cliffside Wylderdrake
-	            	-- 125 = Winding Slitherdrake
-	            	-- 149 = Grotto Netherwing Drake
-	            	-- 188 = Flourishing Whimsydrake
+	            	
+	            	--[[
 
-	            	--if id == 1611 then -- Renewed Proto-Drake: Skin Color
-	            		--print("Renewed Proto-Drake -", data.name, choice)
-	            		--UpdateSpecificData("RenewedProtoDrake", choice)
-	            	--end
+	            	https://wago.tools/db2/ChrCustomizationOption?filter[Name_lang]=Skin%20Color&filter[ChrModelID]=124&page=1
+					
+					ChrModelIDs
+					-----------
+            		Dragonriding 
+            			124 - Renewed Proto-Drake
+            			129 - Windborne Velocidrake
+		            	123 - Highland Drake
+		            	126 - Cliffside Wylderdrake
+		            	125 - Winding Slitherdrake
+		            	149 - Grotto Netherwing Drake
+		            	188 - Flourishing Whimsydrake
+
+		            Druid
+		            	194 - Moonkin Form
+
+		            Warlock
+		            	148 - Imp
+		            	180 - Voidwalker
+		            	183 - Sayaad
+		            	176 - Felhunter
+		            	181 - Felguard
+		            	184 - Infernal
+		            	182 - Doomguard
+
+
+	            	]]--
+	            	-- 
+
+	            	--if id == 8475 then print(id, data.name, choice) end
 	            	
 	            	if keys[id] then
 	            		UpdateSpecificData(keys[id], choice)
-	            		print(keys[id], "set to", choice) -- Debug
+	            		--print(event, keys[id], "set to", choice) -- Debug
 	            	end
 	            end
 		    end
@@ -404,7 +477,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		keyword, options = strsplit(" ", msg, 2)
 	end
 
-	if(msg == "key" or msg == "keys" or msg == "keystone" or msg == "keystones" or msg == "m+") then
+	if (msg == "key" or msg == "keys" or msg == "keystone" or msg == "keystones" or msg == "m+") then
 		local itemTable = {}
 		local icon = 4352494
 		local total = 0
@@ -539,6 +612,13 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		OutputFrame:SetWidth(450)
 		OutputFrame:SetHeight(520)
 		OutputFrame:Show()
+	elseif msg == "weeklyreset" then
+		for char, _ in pairs(ArmyDB) do
+			ArmyDB[char]["KeystoneMap"] = nil
+			ArmyDB[char]["KeystoneLevel"] = 0
+		end
+
+		UpdateData()
 	else
 		local totalMoney, realmMoney = 0, 0
 		local faction,_ = UnitFactionGroup("player")
@@ -622,6 +702,10 @@ local function eventHandler(self, event)
 	if event == "VARIABLES_LOADED" then
 		-- Make sure defaults are set
 		if not ArmyDB then ArmyDB = { } end
+	elseif event == "WEEKLY_REWARDS_UPDATE" then
+		C_Timer.After(1, function()
+			UpdateData()
+		end)
 	else
 		UpdateData()
 	end
