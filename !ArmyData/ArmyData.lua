@@ -136,7 +136,6 @@ local items = {
 	["Tidalcore"] = 165948,
 	["Breath of Bwonsamdi"] = 165703,
 	["Sanguicell"] = 162461,
-	["Primal Chaos"] = 190454,
 
 	-- Events
 	["Coin of Ancestry"] = 21100,
@@ -149,11 +148,12 @@ local items = {
 	["Polished Pet Charm"] = 163036,
 	["Shiny Pet Charm"] = 116415,
 
-	-- Protoform Synthesis
+	-- Shadowlands
 	["Genesis Mote"] = 188957,
-
-	-- Misc
 	["Sandworn Relic"] = 190189,
+
+	-- Dragonflight
+	["Dreamsurge Coalescence"] = 207026,
 }
 
 -- https://wago.tools/db2/MapChallengeMode?sort[ID]=desc
@@ -345,13 +345,13 @@ function GetSimpleItemInfo(id)
 	elseif id == 165948 then return "|cff0070ddTidalcore|r", 1020350
 	elseif id == 152668 then return "|cff0070ddExpulsom|r", 2065568
 	elseif id == 137642 then return "|cff0070ddMark of Honor|r", 1322720
-	elseif id == 116415 then return "Shiny Pet Charm", 413584
-	elseif id == 163036 then return "Polished Pet Charm", 2004597
+	elseif id == 116415 then return "|cffffffffShiny Pet Charm|r", 413584
+	elseif id == 163036 then return "|cffffffffPolished Pet Charm|r", 2004597
 	elseif id == 188957 then return "|cff1eff00Genesis Mote|r", 4287471
 	elseif id == 190189 then return "|cffa335eeSandworn Relic|r", 519378
-	elseif id == 21100 then return "Coin of Ancestry", 133858
+	elseif id == 21100 then return "|cffffffffCoin of Ancestry|r", 133858
 	elseif id == 151134 then return "|cff1eff00Trial of Style Token|r", 1500867
-	elseif id == 190454 then return "|cffa335eePrimal Chaos|r", 4643980
+	elseif id == 207026 then return "|cffffffffDreamsurge Coalescence|r", 132858
 	else return id, 134400
 	end
 end
