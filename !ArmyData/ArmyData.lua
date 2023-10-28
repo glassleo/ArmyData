@@ -526,6 +526,271 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		OutputFrame:SetWidth(600)
 		OutputFrame:SetHeight(520)
 		OutputFrame:Show()
+	elseif (msg == "audit" or msg == "weekly") then
+		local name = UnitName("player")
+		local realm = GetRealmName()
+		local _, class = UnitClass("player")
+		local faction = UnitFactionGroup("player")
+
+		if not realm then print("Player data not available") return end
+
+		local profession, professionIcon = "", 0
+		local prof1, prof2, archaeology, fishing, cooking = GetProfessions()
+		local prof1Name, prof1Icon, prof2Name, prof2Icon = "", 0, "", 0
+		if prof1 then
+			prof1Name, prof1Icon = GetProfessionInfo(prof1)
+		end
+		if prof2 then
+			prof2Name, prof2Icon = GetProfessionInfo(prof2)
+		end
+		if prof1Name and prof1Name ~= "Engineering" then
+			profession, professionIcon = prof1Name, prof1Icon
+		elseif prof2Name and prof2Name ~= "Engineering" then
+			profession, professionIcon = prof2Name, prof2Icon
+		end
+
+		local yes, no = CreateAtlasMarkup("common-icon-checkmark"), CreateAtlasMarkup("common-icon-redx")
+		local QuestNormal = CreateAtlasMarkup("QuestNormal")
+
+		OutputFrame:SetTitle("|c" .. RAID_CLASS_COLORS[class].colorStr .. name .. "|r  |cff9d9d9d" .. realm .. "")
+
+		if ScrollStatus then AceGUI:Release(Scroll) end
+		Scroll = AceGUI:Create("ScrollFrame")
+		Scroll:SetLayout("Flow")
+		ScrollStatus = true
+		OutputGroup:AddChild(Scroll)
+
+		local function AddLabel(text)
+			local Label = AceGUI:Create("Label")
+			Label:SetText("|cffffd100" .. text .. "|r")
+			Label:SetFullWidth(true)
+			Label:SetHeight(140)
+			Label:SetFontObject("GameFontNormalLarge")
+			--Label:SetJustifyH("CENTER")
+			Scroll:AddChild(Label)
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText(" ")
+			Label:SetFullWidth(true)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
+		end
+
+		local function AddRow(checked, icon, text, description)
+			local Label = AceGUI:Create("Label")
+			Label:SetText((type(checked) == "string") and ("|cffffff00" .. checked .. "|r") or checked and yes or no)
+			Label:SetRelativeWidth(0.06)
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText((icon and "|T" .. icon .. ":0|t " or "") .. text or "")
+			if(checked) then
+				Label:SetRelativeWidth(0.94)
+			else
+				Label:SetRelativeWidth(0.44)
+			end
+			Label:SetFontObject("GameFontNormal")
+			Scroll:AddChild(Label)
+
+			if not checked then
+				local Label = AceGUI:Create("Label")
+				Label:SetText(description or "")
+				Label:SetRelativeWidth(0.5)
+				Label:SetFontObject("GameFontNormal")
+				Scroll:AddChild(Label)
+			end
+		end
+
+		local function AH(a, h)
+			return (faction == "Horde") and h or a
+		end
+
+		local function HasItem(id)
+			local count = GetItemCount(id, false, false, false) or 0
+			return (count >= 1) and true or false
+		end
+
+		local function HasBankItem(id)
+			local count = GetItemCount(id, true, false, true) or 0
+			return (count >= 1) and true or false
+		end
+
+		local function HasReputation(id, required)
+			local name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus = GetFactionInfoByID(id)
+			return (standingID >= required) and true or false
+		end
+
+		local function CheckQuests(ids)
+			local ids = { strsplit(",", ids) }
+			local done = 0
+
+			for i, id in pairs(ids) do
+				if C_QuestLog.IsQuestFlaggedCompleted(tonumber(id or 0) or 0) then
+					done = done + 1
+				end
+			end
+
+			if done == #ids then
+				return true
+			elseif done >= 1 then
+				return done .. "/" .. #ids
+			end
+			return false
+		end
+
+		local function CheckAnyQuest(ids)
+			local ids = { strsplit(",", ids) }
+			local done = false
+
+			for i, id in pairs(ids) do
+				if C_QuestLog.IsQuestFlaggedCompleted(tonumber(id or 0) or 0) then
+					done = true
+				end
+			end
+
+			return done
+		end
+
+		local function CheckReputation(id, required)
+			local name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus = GetFactionInfoByID(id)
+			local labels = { [1] = FACTION_STANDING_LABEL1, [2] = FACTION_STANDING_LABEL2, [3] = FACTION_STANDING_LABEL3, [4] = FACTION_STANDING_LABEL4, [5] = FACTION_STANDING_LABEL5, [6] = FACTION_STANDING_LABEL6, [7] = FACTION_STANDING_LABEL7, [8] = FACTION_STANDING_LABEL8 }
+
+			if standingID >= required then
+				return "|cff1aff1a" .. labels[standingID] .. " with " .. name .. "|r"
+			else
+				return "|cff9d9d9d" .. labels[standingID] .. " with " .. name .. "|r |cff595959(" .. FormatLargeNumber(barValue or 0) .. " / " .. FormatLargeNumber(barMax or 0) .. ")|r"
+			end
+		end
+
+		local function CheckItems(id, icon, name)
+			local count = GetItemCount(id, false, true, false) or 0
+			return (count >= 1 and "|cff1aff1a" .. count or "|cff9d9d9dNo") .. " |T" .. icon .. ":0|t " .. name .. " available"
+		end
+
+		----
+
+
+		if msg == "audit" then
+			AddLabel("Items")
+
+			AddRow(HasItem(AH(63352, 63353)), AH(461810, 461813), "|cff1eff00Shroud of Cooperation|r", CheckReputation(1168, 6))
+			AddRow(HasItem(AH(63206, 63207)), AH(461811, 461814), "|cff0070ddWrap of Unity|r", CheckReputation(1168, 6))
+			AddRow(HasItem(AH(65360, 65274)), AH(461812, 461815), "|cffa335eeCloak of Coordination|r", CheckReputation(1168, 7))
+		else
+			AddLabel(profession)
+
+			if profession == "Alchemy" then
+
+				AddRow(CheckAnyQuest("70533,70530,70531,70532"), nil, QuestNormal .. " |cffffd100Alchemy Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("72427,66940,66938,66937,75363,75371"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("66373,66374"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70511"), 463558, "|cff0070ddElementious Splinter|r", "|cff9d9d9dDrops from |rElementals")
+				AddRow(CheckQuests("70504"), 1500941, "|cff0070ddDecaying Phlegm|r", "|cff9d9d9dDrops from |rDecay Elementals")
+				AddRow(CheckQuests("74108"), 3615513, "|cff0070ddDraconic Treatise on Alchemy|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Blacksmithing" then
+				
+				AddRow(CheckAnyQuest("70234,70211,70233,70235"), nil, QuestNormal .. " |cffffd100Blacksmithing Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("66897,66941,66517,72398,75569,75148"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("70589"), nil, QuestNormal .. " |cffffd100Blacksmithing Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
+				AddRow(CheckQuests("66381,66382"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70512"), 962047, "|cff0070ddPrimeval Earth Fragment|r", "|cff9d9d9dDrops from |rEarth Elementals")
+				AddRow(CheckQuests("70513"), 451169, "|cff0070ddMolten Globule|r", "|cff9d9d9dDrops from |rFire Elementals")
+				AddRow(CheckQuests("74109"), 3618821, "|cff0070ddDraconic Treatise on Blacksmithing|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Enchanting" then
+			
+				AddRow(CheckAnyQuest("72175,72172,72155,72173"), nil, QuestNormal .. " |cffffd100Enchanting Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("72423,66900,66935,66884,75865,75150"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("66377,66378"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70514"), 237016, "|cff0070ddPrimordial Aether|r", "|cff9d9d9dDrops from |rArcane Elementals")
+				AddRow(CheckQuests("70515"), 1379232, "|cff0070ddPrimalist Charm|r", "|cff9d9d9dDrops from |rPrimalists")
+				AddRow(CheckQuests("74110"), 3615911, "|cff0070ddDraconic Treatise on Enchanting|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Herbalism" then
+			
+				AddRow(CheckAnyQuest("70615,70614,70613,70616"), nil, QuestNormal .. " |cffffd100Herbalism Weekly|r", "|cff9d9d9dTurn in specific herbs|r")
+				AddRow(CheckQuests("71857,71858,71859,71860,71861"), 959796, "|cff0070ddDreambloom Petal|r", "Can drop while gathering any herb")
+				AddRow(CheckQuests("71864"), 200678, "|cffa335eeDreambloom|r", "Can drop while gathering any herb")
+				AddRow(CheckQuests("74107"), 3615517, "|cff0070ddDraconic Treatise on Herbalism|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Inscription" then
+				
+				AddRow(CheckAnyQuest("70561,70560,70559,70558"), nil, QuestNormal .. " |cffffd100Inscription Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("72438,66945,66943,66944,75573,75149"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("70592"), nil, QuestNormal .. " |cffffd100Inscription Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
+				AddRow(CheckQuests("66375,66376"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70518"), 134420, "|cff0070ddCurious Djaradin Rune|r", "|cff9d9d9dDrops from |rDjaradin")
+				AddRow(CheckQuests("70519"), 348560, "|cff0070ddDraconic Glamour|r", "|cff9d9d9dDrops from |rSundered Flame Draconids")
+				AddRow(CheckQuests("74105"), 3615518, "|cff0070ddDraconic Treatise on Inscription|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Jewelcrafting" then
+			
+				AddRow(CheckAnyQuest("70563,70564,70562,70565"), nil, QuestNormal .. " |cffffd100Jewelcrafting Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("66516,66949,66950,72428,75362,75602"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("70593"), nil, QuestNormal .. " |cffffd100Jewelcrafting Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
+				AddRow(CheckQuests("66388,66389"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70520"), 132879, "|cff0070ddIncandescent Curio|r", "|cff9d9d9dDrops from |rEarth Elementals")
+				AddRow(CheckQuests("70521"), 134890, "|cff0070ddElegantly Engraved Embellishment|r", "|cff9d9d9dDrops from |rSundered Flame Draconids")
+				AddRow(CheckQuests("74112"), 3615519, "|cff0070ddDraconic Treatise on Jewelcrafting|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Leatherworking" then
+			
+				AddRow(CheckAnyQuest("70567,70568,70571,70569"), nil, QuestNormal .. " |cffffd100Leatherworking Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("66951,66363,66364,72407,75354,75368"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("70594"), nil, QuestNormal .. " |cffffd100Leatherworking Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
+				AddRow(CheckQuests("66384,66385"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70522"), 1377086, "|cff0070ddOssified Hide|r", "|cff9d9d9dDrops from |rProto-Drakes")
+				AddRow(CheckQuests("70523"), 466842, "|cff0070ddExceedingly Soft Skin|r", "|cff9d9d9dDrops from |rVorquin")
+				AddRow(CheckQuests("74113"), 3615520, "|cff0070ddDraconic Treatise on Leatherworking|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Mining" then
+			
+				AddRow(CheckAnyQuest("72157,70617,70618,72156"), nil, QuestNormal .. " |cffffd100Mining Weekly|r", "|cff9d9d9dTurn in specific materials|r")
+				AddRow(CheckQuests("70381,70383,70384,70385,70386"), 961627, "|cff0070ddIridescent Ore Fragments|r", "Can drop while mining any node")
+				AddRow(CheckQuests("70389"), 134563, "|cffa335eeIridescent Ore|r", "Can drop while mining any node")
+				AddRow(CheckQuests("74106"), 3615521, "|cff0070ddDraconic Treatise on Mining|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Skinning" then
+			
+				AddRow(CheckAnyQuest("70620,72159,72158,70619"), nil, QuestNormal .. " |cffffd100Skinning Weekly|r", "|cff9d9d9dTurn in specific materials|r")
+				AddRow(CheckQuests("70381,70383,70384,70385,70386"), 4559226, "|cff0070ddCurious Hide Scraps|r", "Can drop while skinning any creature")
+				AddRow(CheckQuests("70389"), 4559228, "|cffa335eeLarge Sample of Curious Hide|r", "Can drop while skinning any creature")
+				AddRow(CheckQuests("74114"), 4625106, "|cff0070ddDraconic Treatise on Skinning|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			elseif profession == "Tailoring" then
+			
+				AddRow(CheckAnyQuest("70587,70572,70582,70586"), nil, QuestNormal .. " |cffffd100Tailoring Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("66899,66953,66952,72410,75407,75600"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("70595"), nil, QuestNormal .. " |cffffd100Tailoring Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
+				AddRow(CheckQuests("66386,66387"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70524"), 463527, "|cff0070ddOhn'ahran Weave|r", "|cff9d9d9dDrops from |rNokhud Centaurs")
+				AddRow(CheckQuests("70525"), 2032604, "|cff0070ddStupidly Effective Stitchery|r", "|cff9d9d9dDrops from |rGnolls")
+				AddRow(CheckQuests("74115"), 3615523, "|cff0070ddDraconic Treatise on Tailoring|r", "|cff9d9d9dCrafted with Inscription|r")
+			
+			end
+
+
+			AddLabel(" ")
+			AddLabel("Engineering")
+
+			AddRow(CheckAnyQuest("70557,70545,70539,70540"), nil, QuestNormal .. " |cffffd100Engineering Weekly|r", "|cff9d9d9dCrafting quest|r")
+			AddRow(CheckAnyQuest("66942,66891,72396,66890,75575,75608"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+			AddRow(CheckQuests("70591"), nil, QuestNormal .. " |cffffd100Engineering Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
+			AddRow(CheckQuests("66379,66380"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+			AddRow(CheckQuests("70516"), 2000861, "|cff0070ddKeeper's Mark|r", "|cff9d9d9dDrops from |rTitan Constructs")
+			AddRow(CheckQuests("70517"), 2115322, "|cff0070ddInfinitely Attachable Pair o' Docks|r", "|cff9d9d9dDrops from |rDragonkin")
+			AddRow(CheckQuests("74111"), 4624728, "|cff0070ddDraconic Treatise on Engineering|r", "|cff9d9d9dCrafted with Inscription|r")
+		end
+
+		----
+
+
+		OutputFrame:SetStatusText("")
+		OutputFrame:SetWidth(600)
+		OutputFrame:SetHeight(520)
+		OutputFrame:Show()
 	elseif currencies[msg] then
 		local currencyName = msg
 		local currencyTable = {}
