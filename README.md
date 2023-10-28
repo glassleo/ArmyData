@@ -8,6 +8,10 @@ The addon also keeps track of and provides useful output for:
 - Mythic Keystones: ``/army m+``
 - Weekly Dragonflight profession knowledge: ``/army weekly``
 
+![Screenshot 2023-10-28 at 16 53 35](https://github.com/glassleo/ArmyData/assets/9146240/88f31a90-061e-476e-8320-990ac11e80a2)
+![Screenshot 2023-10-28 at 16 58 16](https://github.com/glassleo/ArmyData/assets/9146240/30ae44bc-074b-489c-809b-a9ab12182a56)
+
+
 Almost all relevant currencies are stored. In addition the following items are also stored:
 - Primal Spirit, Blood of Sargeras, Expulsom, Hydrocore, Titalcore, Breath of Bwonsamdi, Sanguicell
 - Coin of Ancestry, Trial of Style Token
