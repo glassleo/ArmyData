@@ -550,6 +550,8 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		local yes, no, maybe = CreateAtlasMarkup("common-icon-checkmark"), CreateAtlasMarkup("common-icon-redx"), CreateAtlasMarkup("common-icon-checkmark-yellow")
 		local QuestNormal = CreateAtlasMarkup("QuestNormal")
 
+		local TotalYes, TotalNo, TotalMaybe = 0, 0, 0
+
 		OutputFrame:SetTitle("|c" .. RAID_CLASS_COLORS[class].colorStr .. name .. "|r  |cff9d9d9d" .. realm .. "")
 
 		if ScrollStatus then AceGUI:Release(Scroll) end
@@ -582,25 +584,32 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			Label:SetText("|cffffd100" .. text .. "|r")
 			Label:SetFullWidth(true)
 			Label:SetFontObject("GameFontNormalLarge")
-			--Label:SetJustifyH("CENTER")
 			Scroll:AddChild(Label)
 
 			AddSpace()
 		end
 
 		local function AddRow(checked, icon, text, description)
+			if type(checked) == "string" then
+				TotalMaybe = TotalMaybe + 1
+			elseif checked then
+				TotalYes = TotalYes + 1
+			else
+				TotalNo = TotalNo + 1
+			end
+
 			local Label = AceGUI:Create("Label")
 			Label:SetText((type(checked) == "string") and ("|cffffff00" .. checked .. "|r") or checked and yes or no)
-			Label:SetRelativeWidth(0.06)
+			Label:SetRelativeWidth(0.09)
 			Label:SetFontObject("GameFontNormal")
 			Scroll:AddChild(Label)
 
 			local Label = AceGUI:Create("Label")
 			Label:SetText((icon and "|T" .. icon .. ":0|t " or "") .. text or "")
 			if(not checked or type(checked) == "string") then
-				Label:SetRelativeWidth(0.44)
+				Label:SetRelativeWidth(0.4)
 			else
-				Label:SetRelativeWidth(0.94)
+				Label:SetRelativeWidth(0.9)
 			end
 			Label:SetFontObject("GameFontNormal")
 			Scroll:AddChild(Label)
@@ -704,6 +713,8 @@ function SlashCmdList.ARMYDATA(msg, ...)
 
 
 		if msg == "audit" then
+			TotalYes, TotalNo, TotalMaybe = 0, 0, 0
+
 			----
 			AddLabel("Character")
 
@@ -751,6 +762,13 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			----
 			AddLabel("Items")
 
+
+			AddRow(HasItem(188152), 607513, "|cff0070ddGateway Control Shard|r", "|cff9d9d9dSold by Reagent vendors|r")
+
+			if prof1Name ~= "Engineering" and prof2Name ~= "Engineering" then
+				AddRow(HasItem(109253), 237296, "|cff1eff00Ultimate Gnomish Army Knife|r", "|cff9d9d9dCrafted with Engineering|r")
+			end
+
 			if class ~= "MAGE" then
 				AddRow(HasItem(AH(63352, 63353)), AH(461810, 461813), "|cff1eff00Shroud of Cooperation|r", CheckReputation(1168, 6))
 				AddRow(HasItem(AH(63206, 63207)), AH(461811, 461814), "|cff0070ddWrap of Unity|r", CheckReputation(1168, 6))
@@ -759,12 +777,18 @@ function SlashCmdList.ARMYDATA(msg, ...)
 
 			AddRow(HasItem(103678), 643915, "|cffa335eeTime-Lost Artifact|r", CheckReputation(1492, 6))
 			AddRow(HasItem(202046), 2203919, "|cff0070ddLucky Tortollan Charm|r", "|cff9d9d9dPurchase from |cffffffffGriftah|r in Waking Shores|r")
+			
+			AddRow(HasItem(111820), 308321, "|cff0070ddSwapblaster|r", "|cff9d9d9dCrafted with Engineering|r")
 
 
 			---
-			if prof1Name == "Engineering" or prof2Name == "Engineering"then
+			if prof1Name == "Engineering" or prof2Name == "Engineering" then
 				AddLabel("Engineering")
 
+				if level >= 10 then
+					AddRow(HasItem(114943), 237296, "|cff0070ddUltimate Gnomish Army Knife|r", CheckSkill(2501, 1, "Draenor Engineering"))
+					AddRow(HasSkill(2503, 70), 986491, "|cff0070ddLoot-A-Rang|r", CheckSkill(2503, 70, "Cataclysm Engineering"))
+				end
 				if level >= 20 then
 					if SpellKnown(20219) then
 						AddRow(true, 132996, "Gnomish Engineer")
@@ -779,6 +803,30 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				end
 				if level >= 30 then
 					AddRow(HasItem(49040), 254097, "|cffa335eeJeeves|r", CheckSkill(2504, 75, "Northrend Engineering"))
+				end
+				if level >= 20 then
+					if SpellKnown(20219) then -- Gnomish Engineer
+						AddRow(HasSkill(2506, 260), 133870, "|cff0070ddUltrasafe Transporter: Gadgetzan|r", CheckSkill(2506, 260, "Classic Engineering"))
+						AddRow(HasSkill(2505, 50), 321487, "|cff0070ddUltrasafe Transporter: Toshley's Station|r", CheckSkill(2505, 50, "Outland Engineering"))
+					elseif SpellKnown(20222) then -- Goblin Engineer
+						AddRow(HasSkill(2506, 260), 133873, "|cff0070ddDimensional Ripper - Everlook|r", CheckSkill(2506, 260, "Classic Engineering"))
+						AddRow(HasSkill(2505, 50), 133865, "|cff0070ddDimensional Ripper - Area 52|r", CheckSkill(2505, 50, "Outland Engineering"))
+					end
+				end
+				if level >= 10 then
+					AddRow(HasSkill(2504, 40), 135778, "|cff0070ddWormhole Generator: Northrend|r", CheckSkill(2504, 40, "Northrend Engineering"))
+					AddRow(HasSkill(2502, 1), 651094, "|cff0070ddWormhole Generator: Pandaria|r", CheckSkill(2502, 1, "Pandaria Engineering"))
+					AddRow(HasSkill(2501, 1), 892831, "|cff0070ddWormhole Centrifuge|r", CheckSkill(2501, 1, "Draenor Engineering"))
+				end
+				if level >= 50 then
+					AddRow(HasItem(144341), 1405815, "|cff0070ddRechargeable Reaves Battery|r", CheckItems(124124, 1417744, "|cff0070ddBlood of Sargeras|r"))
+					AddRow(HasSkill(2500, 1), 237560, "|cff0070ddWormhole Generator: Argus|r", CheckSkill(2500, 1, "Legion Engineering"))
+				end
+				if level >= 45 then
+					AddRow(HasSkill(2499, 1), AH(2000841, 2000840), "|cff0070ddWormhole Generator: " .. AH("Kul Tiras", "Zandalar") .. "|r", CheckSkill(2499, 1, AH("Kul Tiran Engineering", "Zandalari Engineering")))
+				end
+				if level >= 50 then
+					AddRow(HasSkill(2755, 1), 3610528, "|cff0070ddWormhole Generator: Shadowlands|r", CheckSkill(2755, 1, "Shadowlands Engineering"))
 				end
 				if level >= 60 then
 					AddRow(CheckQuests("70573,70574,70575,70576,70577,70578,70579,70580,70581,70583,70584,70585,73145,73143,73144,75186"), 4548860, "|cff0070ddWyrmhole Generator: Dragon Isles|r", "|cff9d9d9dMissing locations|r")
@@ -829,7 +877,20 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				AddRow(CheckQuests("65694"), 1360978, "|cffa335eeFont of Ephemeral Power|r", CheckReputation(2478, 5))
 			end
 
+			----
+			if level >= 10 then
+				AddLabel("Legion")
+
+				AddRow(CheckAnyQuest("44184,44663"), 1444943, "Dalaran Hearthstone", "|cff9d9d9dSkip available in |r" .. AH("Stormwind", "Orgrimmar"))
+
+
+				AddLabel("Draenor")
+
+				AddRow(CheckAnyQuest("34586,34378"), 1041860, "Garrison Hearthstone", "|cff9d9d9dQuest available in |r" .. AH("Shadowmoon Valley", "Frostfire Ridge"))
+			end
+
 			AddSpace()
+			OutputFrame:SetStatusText((TotalYes + TotalMaybe + TotalNo) .. " Items Checked:   " .. yes .. " |cff1aff1a" .. TotalYes .. "|r    " .. maybe .. " |cffffff00" .. TotalMaybe .. "|r    " .. no .. " |cffff0000" .. TotalNo .. "|r")
 		else
 			if prof1Name == "Alchemy" or prof2Name == "Alchemy" then
 				AddLabel("Alchemy")
@@ -942,12 +1003,10 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			end
 
 			AddSpace()
+			OutputFrame:SetStatusText("")
 		end
 
 		----
-
-
-		OutputFrame:SetStatusText("")
 		OutputFrame:SetWidth(700)
 		OutputFrame:SetHeight(520)
 		OutputFrame:Show()
