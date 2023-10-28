@@ -1,6 +1,6 @@
 # ArmyData
 
-A simple addon that keeps track of character data for you. All data is stored in a global table [``ArmyDB``) which can be accessed by other addons like WeakAuras.
+A simple addon that keeps track of character data for you. All data is stored in a global table (``ArmyDB``) which can be accessed by other addons like WeakAuras.
 
 The addon also keeps track of and provides useful output for:
 - Gold: ``/army``
