@@ -1,32 +1,42 @@
 # ArmyData
 
-A rather crude addon that simply keeps track of character information for all your characters in a global table that other addons can acess (like WeakAuras). No one except me will probably ever realistically use this.
+A simple addon that keeps track of character data for you. All data is stored in a global table [``ArmyDB``) which can be accessed by other addons like WeakAuras.
 
-There is a slash command to display some gold/currency data. Other than that you will need to write your own WeakAuras or addons to display the information.
+The addon also keeps track of and provides useful output for:
+- Gold: ``/army``
+- Currencies and some currency-like items: ``/army Timewarped Badge`` (case sensitive)
+- Mythic Keystones: ``/army m+``
+- Weekly Dragonflight profession knowledge: ``/army weekly``
 
-Takes into account connected realms, but currently there is only connected realm data for the the specific realms I happen to play on:
+---
 
-- Moonglade / Steamwheedle Cartel / The Sha'tar
-- Bloodfeather / Kor'gall / Executus / Burning Steppes / Shattered Hand / Terokkar / Saurfang / Darkspear
-- Ravenholdt / Sporeggar / Scarshield Legion / The Venture Co / Defias Brotherhood / Earthen Ring / Darkmoon Faire
-- Al'Akir / Xavius / Skullcrusher / Burning Legion
+### Additional Commands
+- ``/army delete Name-Realm Name`` – Deletes all data for a specific character (name is case sensitive)
+- ``/army audit`` – WIP audit window
 
-It also assumes that you have **Engineering on all characters**, since I do.
+---
 
-## Slash command: ``/army CurrencyName``
+## ``ArmyDB`` table
 
-- Currencies are in CamelCase and have any special characters omitted, for example: ``GarrisonResources``, ``EpicureansAward`` or ``CoinsOfAir``
-- Displays the characters with the most amount of the given currency on that connected realm and faction
-- If you don't specify a currency name, gold will be used instead
+Each character has its own table stored as ``ArmyDB["Name-Real Name"]``
 
-## Global table: ``ArmyDB["name-realm"]``
-
-- ``Name`` - Character Name - Example: ``Leo``
-- ``Realm`` - Realm Name - Example: ``The Sha'tar``
-- ``Faction`` - Faction Name - Example: ``Horde``
-- ``Class`` - Class (uppercase, in English) - Example: ``DEATHKNIGHT``
-- ``Money`` - Total amount of money (in Copper) - Example: ``124578454`` (12,457 Gold, 84 Silver and 54 Copper)
-- ``LootSpec`` - Current Loot Specialization - integer from ``0-4`` with ``0`` being no loot spec
-- ``Profession`` - Primary profession that is not Engineering - Example: ``Alchemy``
-- ``ProfessionIcon`` - Profession icon texture ID - Example: ``136240`` (![trade_alchemy](https://wow.zamimg.com/images/wow/icons/small/trade_alchemy.jpg))
-- Most currencies in CamelCase format as integers of current amount, for example: ``GarrisonResources``, ``EpicureansAward`` or ``CoinsOfAir``
+Here are some of the keys available:
+- ``Name`` – Character name (example: ``Gorgina``)
+- ``Realm`` – Realm name (example: ``The Sha'tar``)
+- ``Faction`` – Faction (example: ``Horde``)
+- ``Class`` - Class (example: ``DEMONHUNTER``)
+- ``Money`` – Amount of money in copper (example: ``160432158`` representing 16,043 gold, 21 silver and 58 copper)
+- ``Specialization`` – Current loot specialization (example: ``1``)
+- ``Profession`` – First profession learned that is not Engineering (example: ``Jewelcrafting``)
+- ``Covenant`` – Shadowlands Covenant ID (example: ``1``)
+- ``Renown`` – Shadowlands Covenant Renown level (example: ``80``)
+- ``KeystoneMap`` – Current M+ Map ID (example: ``245`` for Freehold)
+- ``KeystoneLevel`` – Current M+ Key Level (example: ``20``)
+- ``Currencies`` – Table with currency data
+- ``Items`` – Table with item data
+- ``RenewedProtoDrake`` – Chosen Renewed Proto-Drake scale color (example: ``2`` for blue)
+- ``RenewedProtoDrakeTransformation`` – Chosen Renewed Proto-Drake transformation (example: ``1`` for no transformation)
+- ``Ìmp`` – Chosen Imp color
+- ``ImpStyle`` – Chosen Imp style
+- ``Moonkin`` – Chsoen Moonkin Form feather color
+- ``MoonkinTransformation`` – Chosen Moonkin Form full transformation
