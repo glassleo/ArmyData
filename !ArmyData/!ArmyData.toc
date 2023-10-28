@@ -1,6 +1,6 @@
-## Interface: 100105
+## Interface: 100107
 ## Title: Army Data
-## Version: 10.1.5
+## Version: 1
 ## Notes: Stores data for your Army of Alts
 ## Author: Leo
 ## IconTexture: 413577
