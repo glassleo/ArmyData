@@ -1,9 +1,8 @@
 SLASH_ARMYDATA1 = "/army"
-SLASH_ARMYDATA2 = "/a"
 ArmyData = LibStub("AceAddon-3.0"):NewAddon("ArmyData", "AceConsole-3.0", "AceEvent-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
 
-OutputFrame = AceGUI:Create("Frame")
+local OutputFrame = AceGUI:Create("Frame")
 OutputFrame:SetLayout("Fill")
 local OutputGroup = AceGUI:Create("SimpleGroup")
 OutputGroup:SetFullWidth(true)
@@ -13,6 +12,9 @@ OutputFrame:AddChild(OutputGroup)
 OutputFrame:Hide()
 local Scroll
 local ScrollStatus = false
+
+_G["ArmyDataOutputFrame"] = OutputFrame.frame
+tinsert(UISpecialFrames, "ArmyDataOutputFrame")
 
 local frame = CreateFrame("FRAME", "ArmyData")
 
@@ -531,6 +533,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		local realm = GetRealmName()
 		local _, class = UnitClass("player")
 		local faction = UnitFactionGroup("player")
+		local level = UnitLevel("player") or 1
 
 		if not realm then print("Player data not available") return end
 
@@ -543,13 +546,8 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		if prof2 then
 			prof2Name, prof2Icon = GetProfessionInfo(prof2)
 		end
-		if prof1Name and prof1Name ~= "Engineering" then
-			profession, professionIcon = prof1Name, prof1Icon
-		elseif prof2Name and prof2Name ~= "Engineering" then
-			profession, professionIcon = prof2Name, prof2Icon
-		end
 
-		local yes, no = CreateAtlasMarkup("common-icon-checkmark"), CreateAtlasMarkup("common-icon-redx")
+		local yes, no, maybe = CreateAtlasMarkup("common-icon-checkmark"), CreateAtlasMarkup("common-icon-redx"), CreateAtlasMarkup("common-icon-checkmark-yellow")
 		local QuestNormal = CreateAtlasMarkup("QuestNormal")
 
 		OutputFrame:SetTitle("|c" .. RAID_CLASS_COLORS[class].colorStr .. name .. "|r  |cff9d9d9d" .. realm .. "")
@@ -560,20 +558,34 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		ScrollStatus = true
 		OutputGroup:AddChild(Scroll)
 
-		local function AddLabel(text)
-			local Label = AceGUI:Create("Label")
-			Label:SetText("|cffffd100" .. text .. "|r")
-			Label:SetFullWidth(true)
-			Label:SetHeight(140)
-			Label:SetFontObject("GameFontNormalLarge")
-			--Label:SetJustifyH("CENTER")
-			Scroll:AddChild(Label)
-
+		local function AddSpace()
 			local Label = AceGUI:Create("Label")
 			Label:SetText(" ")
 			Label:SetFullWidth(true)
 			Label:SetFontObject("GameFontNormal")
 			Scroll:AddChild(Label)
+		end
+
+		local firstlabel = true
+		local function AddLabel(text)
+			if firstlabel then
+				firstlabel = false
+			else
+				local Label = AceGUI:Create("Label")
+				Label:SetText(" ")
+				Label:SetFullWidth(true)
+				Label:SetFontObject("GameFontNormalLarge")
+				Scroll:AddChild(Label)
+			end
+
+			local Label = AceGUI:Create("Label")
+			Label:SetText("|cffffd100" .. text .. "|r")
+			Label:SetFullWidth(true)
+			Label:SetFontObject("GameFontNormalLarge")
+			--Label:SetJustifyH("CENTER")
+			Scroll:AddChild(Label)
+
+			AddSpace()
 		end
 
 		local function AddRow(checked, icon, text, description)
@@ -585,17 +597,17 @@ function SlashCmdList.ARMYDATA(msg, ...)
 
 			local Label = AceGUI:Create("Label")
 			Label:SetText((icon and "|T" .. icon .. ":0|t " or "") .. text or "")
-			if(checked) then
-				Label:SetRelativeWidth(0.94)
-			else
+			if(not checked or type(checked) == "string") then
 				Label:SetRelativeWidth(0.44)
+			else
+				Label:SetRelativeWidth(0.94)
 			end
 			Label:SetFontObject("GameFontNormal")
 			Scroll:AddChild(Label)
 
-			if not checked then
+			if not checked or type(checked) == "string" then
 				local Label = AceGUI:Create("Label")
-				Label:SetText(description or "")
+				Label:SetText(description or "none")
 				Label:SetRelativeWidth(0.5)
 				Label:SetFontObject("GameFontNormal")
 				Scroll:AddChild(Label)
@@ -604,6 +616,10 @@ function SlashCmdList.ARMYDATA(msg, ...)
 
 		local function AH(a, h)
 			return (faction == "Horde") and h or a
+		end
+
+		local function SpellKnown(id)
+			return IsPlayerSpell(id) or IsSpellKnown(id, true)
 		end
 
 		local function HasItem(id)
@@ -619,6 +635,12 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		local function HasReputation(id, required)
 			local name, description, standingID, barMin, barMax, barValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus = GetFactionInfoByID(id)
 			return (standingID >= required) and true or false
+		end
+
+		local function HasSkill(skill, level)
+			if not Breadcrumbs then return "?" end
+			if (Breadcrumbs:GetSkillLine(skill) or 0) >= level then return true end
+			return false
 		end
 
 		local function CheckQuests(ids)
@@ -657,40 +679,170 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			local labels = { [1] = FACTION_STANDING_LABEL1, [2] = FACTION_STANDING_LABEL2, [3] = FACTION_STANDING_LABEL3, [4] = FACTION_STANDING_LABEL4, [5] = FACTION_STANDING_LABEL5, [6] = FACTION_STANDING_LABEL6, [7] = FACTION_STANDING_LABEL7, [8] = FACTION_STANDING_LABEL8 }
 
 			if standingID >= required then
-				return "|cff1aff1a" .. labels[standingID] .. " with " .. name .. "|r"
+				return "|cff1aff1a" .. labels[standingID] .. " with |r" .. name .. "|r"
 			else
-				return "|cff9d9d9d" .. labels[standingID] .. " with " .. name .. "|r |cff595959(" .. FormatLargeNumber(barValue or 0) .. " / " .. FormatLargeNumber(barMax or 0) .. ")|r"
+				return labels[standingID] .. "|cff9d9d9d (" .. FormatLargeNumber(barValue or 0) .. "/" .. FormatLargeNumber(barMax or 0) .. ") with |r" .. name .. "|r"
 			end
 		end
 
 		local function CheckItems(id, icon, name)
-			local count = GetItemCount(id, false, true, false) or 0
+			local count = GetItemCount(id, true, true, true) or 0
 			return (count >= 1 and "|cff1aff1a" .. count or "|cff9d9d9dNo") .. " |T" .. icon .. ":0|t " .. name .. " available"
 		end
+
+		local function CheckSkill(skill, level, name)
+			if not Breadcrumbs then
+				return "|cff9d9d9dRequires |r" .. name .. " " .. level
+			elseif Breadcrumbs:Validate("skill:" .. skill ..  ":" .. level) then
+				return "|cff1aff1a" .. (Breadcrumbs:GetSkillLine(skill) or 0) .. "|cff9d9d9d " .. name .. "|r"
+			else
+				return "|cff9d9d9d" .. (Breadcrumbs:GetSkillLine(skill) or 0) .. "/" .. level .. " |r" .. name .. "|r"
+			end
+		end 
 
 		----
 
 
 		if msg == "audit" then
+			----
+			AddLabel("Character")
+
+			AddRow((GetBindLocation() == "Valdrakken") and true or "?", 134414, "Hearthstone", "|cff9d9d9dCurrently set to |r" .. GetBindLocation())
+
+			-- Dragonriding
+			local missing = false
+			if not SpellKnown(403093) then missing = "Airborne Recovery" end
+			if not SpellKnown(404243) then missing = missing and missing .. ", Land's Blessing" or "Land's Blessing" end
+			if not SpellKnown(377922) then missing = missing and missing .. ", Beyond Infinity" or "Beyond Infinity" end
+			if not SpellKnown(396760) then missing = missing and missing .. ", Yearning for the Sky" or "Yearning for the Sky" end
+			if not SpellKnown(377967) then missing = missing and missing .. ", At Home Aloft" or "At Home Aloft" end
+			if prof1Name == "Herbalism" or prof2Name == "Herbalism" or prof1Name == "Mining" or prof2Name == "Mining" then
+				if not SpellKnown(381870) then missing = missing and missing .. ", Dragonrider's Cultivation" or "Dragonrider's Cultivation" end
+			else
+				if not SpellKnown(381871) then missing = missing and missing .. ", Dragonrider's Hunt" or "Dragonrider's Hunt" end
+			end
+			if not SpellKnown(384824) then missing = missing and missing .. ", Dragonrider's Compassion" or "Dragonrider's Compassion" end
+
+			AddRow((missing == false) and true or false, 4640486, "Dragonriding", "|cff9d9d9dMissing traits:|r " .. (missing or ""))
+
+			-- Mount Equipemnt
+			AddRow(C_MountJournal.GetAppliedMountEquipmentID() and true or false, 413588, "Mount Equipment", "|cff9d9d9dNo Mount Equipment applied")
+
+
+			----
+			AddLabel("Bags")
+
+			local slots = C_Container.GetContainerNumSlots(Enum.BagIndex.Bag_1) or 0
+			AddRow((slots >= 34) and true or (slots >= 32) and maybe or false, 133628, "Bag 1", (slots == 0) and "|cffff0000No bag equipped|r" or slots .. " Slots")
+
+			local slots = C_Container.GetContainerNumSlots(Enum.BagIndex.Bag_2) or 0
+			AddRow((slots >= 34) and true or (slots >= 32) and maybe or false, 133628, "Bag 2", (slots == 0) and "|cffff0000No bag equipped|r" or slots .. " Slots")
+
+			local slots = C_Container.GetContainerNumSlots(Enum.BagIndex.Bag_3) or 0
+			AddRow((slots >= 34) and true or (slots >= 32) and maybe or false, 133628, "Bag 3", (slots == 0) and "|cffff0000No bag equipped|r" or slots .. " Slots")
+
+			local slots = C_Container.GetContainerNumSlots(Enum.BagIndex.Bag_4) or 0
+			AddRow((slots >= 34) and true or (slots >= 32) and maybe or false, 133628, "Bag 4", (slots == 0) and "|cffff0000No bag equipped|r" or slots .. " Slots")
+
+			local slots = C_Container.GetContainerNumSlots(Enum.BagIndex.ReagentBag) or 0
+			AddRow((slots >= 36) and true or (slots >= 32) and maybe or false, 4549254, "Reagent Bag", (slots == 0) and "|cffff0000No bag equipped|r" or slots .. " Slots")
+
+
+			----
 			AddLabel("Items")
 
-			AddRow(HasItem(AH(63352, 63353)), AH(461810, 461813), "|cff1eff00Shroud of Cooperation|r", CheckReputation(1168, 6))
-			AddRow(HasItem(AH(63206, 63207)), AH(461811, 461814), "|cff0070ddWrap of Unity|r", CheckReputation(1168, 6))
-			AddRow(HasItem(AH(65360, 65274)), AH(461812, 461815), "|cffa335eeCloak of Coordination|r", CheckReputation(1168, 7))
+			if class ~= "MAGE" then
+				AddRow(HasItem(AH(63352, 63353)), AH(461810, 461813), "|cff1eff00Shroud of Cooperation|r", CheckReputation(1168, 6))
+				AddRow(HasItem(AH(63206, 63207)), AH(461811, 461814), "|cff0070ddWrap of Unity|r", CheckReputation(1168, 6))
+				AddRow(HasItem(AH(65360, 65274)), AH(461812, 461815), "|cffa335eeCloak of Coordination|r", CheckReputation(1168, 7))
+			end
+
+			AddRow(HasItem(103678), 643915, "|cffa335eeTime-Lost Artifact|r", CheckReputation(1492, 6))
+			AddRow(HasItem(202046), 2203919, "|cff0070ddLucky Tortollan Charm|r", "|cff9d9d9dPurchase from |cffffffffGriftah|r in Waking Shores|r")
+
+
+			---
+			if prof1Name == "Engineering" or prof2Name == "Engineering"then
+				AddLabel("Engineering")
+
+				if level >= 20 then
+					if SpellKnown(20219) then
+						AddRow(true, 132996, "Gnomish Engineer")
+					elseif SpellKnown(20222) then
+						AddRow(true, 135826, "Goblin Engineer")
+					else
+						AddRow(false, 132996, "Engineering Specialization", CheckSkill(2506, 200, "Classic Engineering"))
+					end
+				end
+				if level >= 10 then
+					AddRow(HasSkill(2504, 50), 463542, "|cff0070ddMOLL-E|r", CheckSkill(2504, 50, "Northrend Engineering"))
+				end
+				if level >= 30 then
+					AddRow(HasItem(49040), 254097, "|cffa335eeJeeves|r", CheckSkill(2504, 75, "Northrend Engineering"))
+				end
+				if level >= 60 then
+					AddRow(CheckQuests("70573,70574,70575,70576,70577,70578,70579,70580,70581,70583,70584,70585,73145,73143,73144,75186"), 4548860, "|cff0070ddWyrmhole Generator: Dragon Isles|r", "|cff9d9d9dMissing locations|r")
+				end
+			end
+
+
+			----
+			if level >= 60 then
+				AddLabel("Dragonflight")
+
+				AddRow(CheckQuests("69979"), nil, QuestNormal .. " |cffffd100Artisan's Consortium|r", "|cff9d9d9dSkip available at the |rRuby Lifeshrine")
+				AddRow(CheckQuests("70899"), nil, QuestNormal .. " |cffffd100Engine of Innovation|r", "|cff9d9d9dSkip available in |rValdrakken|r")
+				AddRow(CheckQuests("73156"), nil, QuestNormal .. " |cffffd100Forbidden Reach|r", "|cff9d9d9dSkip available at the |rSeat of the Aspects")
+			end
+
+			----
+			if level >= 60 then
+				AddLabel("Shadowlands")
+
+				AddRow(CheckQuests("59770"), nil, QuestNormal .. " |cffffd100The Maw|r", "|cff9d9d9dSkip available in |r" .. AH("Stormwind", "Orgrimmar"))
+				AddRow(CheckQuests("62704"), nil, QuestNormal .. " |cffffd100Threads of Fate|r", "|cff9d9d9dSkip available in |rOribos")
+
+				local renown = C_CovenantSanctumUI and C_CovenantSanctumUI.GetRenownLevel() or 1
+    			local covenant = C_Covenants and C_Covenants.GetActiveCovenantID() or 0
+
+				if covenant == 1 then
+					AddRow((renown >= 80) and true or (renown >= 60) and maybe or false, 3641395, "Kyrian Renown", (renown >= 60) and "Renown " .. renown or "|cff9d9d9dRenown 60 boost available in Oribos|r")
+				elseif covenant == 2 then
+					AddRow((renown >= 80) and true or (renown >= 60) and maybe or false, 3641397, "Venthyr Renown", (renown >= 60) and "Renown " .. renown or "|cff9d9d9dRenown 60 boost available in Oribos|r")
+				elseif covenant == 3 then
+					AddRow((renown >= 80) and true or (renown >= 60) and maybe or false, 3641394, "Night Fae Renown", (renown >= 60) and "Renown " .. renown or "|cff9d9d9dRenown 60 boost available in Oribos|r")
+				elseif covenant == 4 then
+					AddRow((renown >= 80) and true or (renown >= 60) and maybe or false, 3641396, "Necrolord Renown", (renown >= 60) and "Renown " .. renown or "|cff9d9d9dRenown 60 boost available in Oribos|r")
+				else
+					AddRow(false, 3601566, "Covenant", "|cff9d9d9dChoose a Covenant in |rOribos")
+				end
+
+				if HasBankItem(186472) then
+					AddRow(maybe, 3528275, "|cffa335eeWisps of Memory|r", CheckItems(186472, 3528275, "|cffa335eeWisps of Memory|r"))
+				end
+
+				if HasBankItem(188005) then
+					AddRow(maybe, 3528288, "Anima", "|cff9d9d9dDeposit Anima|r")
+				end
+				
+				AddRow(CheckQuests("64958"), nil, QuestNormal .. " |cffffd100Zereth Mortis|r", "|cff9d9d9dSkip available in |rOribos")
+				AddRow(CheckQuests("65694"), 1360978, "|cffa335eeFont of Ephemeral Power|r", CheckReputation(2478, 5))
+			end
+
+			AddSpace()
 		else
-			AddLabel(profession)
-
-			if profession == "Alchemy" then
-
+			if prof1Name == "Alchemy" or prof2Name == "Alchemy" then
+				AddLabel("Alchemy")
 				AddRow(CheckAnyQuest("70533,70530,70531,70532"), nil, QuestNormal .. " |cffffd100Alchemy Weekly|r", "|cff9d9d9dCrafting quest|r")
 				AddRow(CheckAnyQuest("72427,66940,66938,66937,75363,75371"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("66373,66374"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70511"), 463558, "|cff0070ddElementious Splinter|r", "|cff9d9d9dDrops from |rElementals")
 				AddRow(CheckQuests("70504"), 1500941, "|cff0070ddDecaying Phlegm|r", "|cff9d9d9dDrops from |rDecay Elementals")
 				AddRow(CheckQuests("74108"), 3615513, "|cff0070ddDraconic Treatise on Alchemy|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Blacksmithing" then
-				
+			if prof1Name == "Blacksmithing" or prof2Name == "Blacksmithing" then
+				AddLabel("Blacksmithing")
 				AddRow(CheckAnyQuest("70234,70211,70233,70235"), nil, QuestNormal .. " |cffffd100Blacksmithing Weekly|r", "|cff9d9d9dCrafting quest|r")
 				AddRow(CheckAnyQuest("66897,66941,66517,72398,75569,75148"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70589"), nil, QuestNormal .. " |cffffd100Blacksmithing Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
@@ -698,25 +850,28 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				AddRow(CheckQuests("70512"), 962047, "|cff0070ddPrimeval Earth Fragment|r", "|cff9d9d9dDrops from |rEarth Elementals")
 				AddRow(CheckQuests("70513"), 451169, "|cff0070ddMolten Globule|r", "|cff9d9d9dDrops from |rFire Elementals")
 				AddRow(CheckQuests("74109"), 3618821, "|cff0070ddDraconic Treatise on Blacksmithing|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Enchanting" then
-			
+			if prof1Name == "Enchanting" or prof2Name == "Enchanting" then
+				AddLabel("Enchanting")
 				AddRow(CheckAnyQuest("72175,72172,72155,72173"), nil, QuestNormal .. " |cffffd100Enchanting Weekly|r", "|cff9d9d9dCrafting quest|r")
 				AddRow(CheckAnyQuest("72423,66900,66935,66884,75865,75150"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("66377,66378"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70514"), 237016, "|cff0070ddPrimordial Aether|r", "|cff9d9d9dDrops from |rArcane Elementals")
 				AddRow(CheckQuests("70515"), 1379232, "|cff0070ddPrimalist Charm|r", "|cff9d9d9dDrops from |rPrimalists")
 				AddRow(CheckQuests("74110"), 3615911, "|cff0070ddDraconic Treatise on Enchanting|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Herbalism" then
-			
+			if prof1Name == "Herbalism" or prof2Name == "Herbalism" then
+				AddLabel("Herbalism")
 				AddRow(CheckAnyQuest("70615,70614,70613,70616"), nil, QuestNormal .. " |cffffd100Herbalism Weekly|r", "|cff9d9d9dTurn in specific herbs|r")
-				AddRow(CheckQuests("71857,71858,71859,71860,71861"), 959796, "|cff0070ddDreambloom Petal|r", "Can drop while gathering any herb")
-				AddRow(CheckQuests("71864"), 200678, "|cffa335eeDreambloom|r", "Can drop while gathering any herb")
+				AddRow(CheckQuests("71857,71858,71859,71860,71861"), 959796, "|cff0070ddDreambloom Petal|r", "|cff9d9d9dCan drop while gathering any herb|r")
+				AddRow(CheckQuests("71864"), 959795, "|cffa335eeDreambloom|r", "|cff9d9d9dCan drop while gathering any herb|r")
 				AddRow(CheckQuests("74107"), 3615517, "|cff0070ddDraconic Treatise on Herbalism|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Inscription" then
-				
+			if prof1Name == "Inscription" or prof2Name == "Inscription" then
+				AddLabel("Inscription")
 				AddRow(CheckAnyQuest("70561,70560,70559,70558"), nil, QuestNormal .. " |cffffd100Inscription Weekly|r", "|cff9d9d9dCrafting quest|r")
 				AddRow(CheckAnyQuest("72438,66945,66943,66944,75573,75149"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70592"), nil, QuestNormal .. " |cffffd100Inscription Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
@@ -724,9 +879,10 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				AddRow(CheckQuests("70518"), 134420, "|cff0070ddCurious Djaradin Rune|r", "|cff9d9d9dDrops from |rDjaradin")
 				AddRow(CheckQuests("70519"), 348560, "|cff0070ddDraconic Glamour|r", "|cff9d9d9dDrops from |rSundered Flame Draconids")
 				AddRow(CheckQuests("74105"), 3615518, "|cff0070ddDraconic Treatise on Inscription|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Jewelcrafting" then
-			
+			if prof1Name == "Jewelcrafting" or prof2Name == "Jewelcrafting" then
+				AddLabel("Jewelcrafting")
 				AddRow(CheckAnyQuest("70563,70564,70562,70565"), nil, QuestNormal .. " |cffffd100Jewelcrafting Weekly|r", "|cff9d9d9dCrafting quest|r")
 				AddRow(CheckAnyQuest("66516,66949,66950,72428,75362,75602"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70593"), nil, QuestNormal .. " |cffffd100Jewelcrafting Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
@@ -734,33 +890,37 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				AddRow(CheckQuests("70520"), 132879, "|cff0070ddIncandescent Curio|r", "|cff9d9d9dDrops from |rEarth Elementals")
 				AddRow(CheckQuests("70521"), 134890, "|cff0070ddElegantly Engraved Embellishment|r", "|cff9d9d9dDrops from |rSundered Flame Draconids")
 				AddRow(CheckQuests("74112"), 3615519, "|cff0070ddDraconic Treatise on Jewelcrafting|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Leatherworking" then
-			
+			if prof1Name == "Leatherworking" or prof2Name == "Leatherworking" then
+				AddLabel("Leatherworking")
 				AddRow(CheckAnyQuest("70567,70568,70571,70569"), nil, QuestNormal .. " |cffffd100Leatherworking Weekly|r", "|cff9d9d9dCrafting quest|r")
 				AddRow(CheckAnyQuest("66951,66363,66364,72407,75354,75368"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
-				AddRow(CheckQuests("70594"), nil, QuestNormal .. " |cffffd100Leatherworking Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
+				AddRow(CheckQuests("70594"), nil, QuestNormal .. " |cffffd100 Leatherworking Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
 				AddRow(CheckQuests("66384,66385"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70522"), 1377086, "|cff0070ddOssified Hide|r", "|cff9d9d9dDrops from |rProto-Drakes")
 				AddRow(CheckQuests("70523"), 466842, "|cff0070ddExceedingly Soft Skin|r", "|cff9d9d9dDrops from |rVorquin")
 				AddRow(CheckQuests("74113"), 3615520, "|cff0070ddDraconic Treatise on Leatherworking|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Mining" then
-			
+			if prof1Name == "Mining" or prof2Name == "Mining" then
+				AddLabel("Mining")
 				AddRow(CheckAnyQuest("72157,70617,70618,72156"), nil, QuestNormal .. " |cffffd100Mining Weekly|r", "|cff9d9d9dTurn in specific materials|r")
-				AddRow(CheckQuests("70381,70383,70384,70385,70386"), 961627, "|cff0070ddIridescent Ore Fragments|r", "Can drop while mining any node")
-				AddRow(CheckQuests("70389"), 134563, "|cffa335eeIridescent Ore|r", "Can drop while mining any node")
+				AddRow(CheckQuests("70381,70383,70384,70385,70386"), 961627, "|cff0070ddIridescent Ore Fragments|r", "|cff9d9d9dCan drop while mining any node|r")
+				AddRow(CheckQuests("70389"), 134563, "|cffa335eeIridescent Ore|r", "|cff9d9d9dCan drop while mining any node|r")
 				AddRow(CheckQuests("74106"), 3615521, "|cff0070ddDraconic Treatise on Mining|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 			
-			elseif profession == "Skinning" then
-			
+			if prof1Name == "Skinning" or prof2Name == "Skinning" then
+				AddLabel("Skinning")
 				AddRow(CheckAnyQuest("70620,72159,72158,70619"), nil, QuestNormal .. " |cffffd100Skinning Weekly|r", "|cff9d9d9dTurn in specific materials|r")
-				AddRow(CheckQuests("70381,70383,70384,70385,70386"), 4559226, "|cff0070ddCurious Hide Scraps|r", "Can drop while skinning any creature")
-				AddRow(CheckQuests("70389"), 4559228, "|cffa335eeLarge Sample of Curious Hide|r", "Can drop while skinning any creature")
+				AddRow(CheckQuests("70381,70383,70384,70385,70386"), 4559226, "|cff0070ddCurious Hide Scraps|r", "|cff9d9d9dCan drop while skinning any creature|r")
+				AddRow(CheckQuests("70389"), 4559228, "|cffa335eeLarge Sample of Curious Hide|r", "|cff9d9d9dCan drop while skinning any creature|r")
 				AddRow(CheckQuests("74114"), 4625106, "|cff0070ddDraconic Treatise on Skinning|r", "|cff9d9d9dCrafted with Inscription|r")
-			
-			elseif profession == "Tailoring" then
-			
+			end
+
+			if prof1Name == "Tailoring" or prof2Name == "Tailoring"then
+				AddLabel("Tailoring")
 				AddRow(CheckAnyQuest("70587,70572,70582,70586"), nil, QuestNormal .. " |cffffd100Tailoring Weekly|r", "|cff9d9d9dCrafting quest|r")
 				AddRow(CheckAnyQuest("66899,66953,66952,72410,75407,75600"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70595"), nil, QuestNormal .. " |cffffd100Tailoring Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
@@ -768,27 +928,27 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				AddRow(CheckQuests("70524"), 463527, "|cff0070ddOhn'ahran Weave|r", "|cff9d9d9dDrops from |rNokhud Centaurs")
 				AddRow(CheckQuests("70525"), 2032604, "|cff0070ddStupidly Effective Stitchery|r", "|cff9d9d9dDrops from |rGnolls")
 				AddRow(CheckQuests("74115"), 3615523, "|cff0070ddDraconic Treatise on Tailoring|r", "|cff9d9d9dCrafted with Inscription|r")
-			
 			end
 
+			if prof1Name == "Engineering" or prof2Name == "Engineering"then
+				AddLabel("Engineering")
+				AddRow(CheckAnyQuest("70557,70545,70539,70540"), nil, QuestNormal .. " |cffffd100Engineering Weekly|r", "|cff9d9d9dCrafting quest|r")
+				AddRow(CheckAnyQuest("66942,66891,72396,66890,75575,75608"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckQuests("70591"), nil, QuestNormal .. " |cffffd100Engineering Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
+				AddRow(CheckQuests("66379,66380"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
+				AddRow(CheckQuests("70516"), 2000861, "|cff0070ddKeeper's Mark|r", "|cff9d9d9dDrops from |rTitan Constructs")
+				AddRow(CheckQuests("70517"), 2115322, "|cff0070ddInfinitely Attachable Pair o' Docks|r", "|cff9d9d9dDrops from |rDragonkin")
+				AddRow(CheckQuests("74111"), 4624728, "|cff0070ddDraconic Treatise on Engineering|r", "|cff9d9d9dCrafted with Inscription|r")
+			end
 
-			AddLabel(" ")
-			AddLabel("Engineering")
-
-			AddRow(CheckAnyQuest("70557,70545,70539,70540"), nil, QuestNormal .. " |cffffd100Engineering Weekly|r", "|cff9d9d9dCrafting quest|r")
-			AddRow(CheckAnyQuest("66942,66891,72396,66890,75575,75608"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
-			AddRow(CheckQuests("70591"), nil, QuestNormal .. " |cffffd100Engineering Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
-			AddRow(CheckQuests("66379,66380"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
-			AddRow(CheckQuests("70516"), 2000861, "|cff0070ddKeeper's Mark|r", "|cff9d9d9dDrops from |rTitan Constructs")
-			AddRow(CheckQuests("70517"), 2115322, "|cff0070ddInfinitely Attachable Pair o' Docks|r", "|cff9d9d9dDrops from |rDragonkin")
-			AddRow(CheckQuests("74111"), 4624728, "|cff0070ddDraconic Treatise on Engineering|r", "|cff9d9d9dCrafted with Inscription|r")
+			AddSpace()
 		end
 
 		----
 
 
 		OutputFrame:SetStatusText("")
-		OutputFrame:SetWidth(600)
+		OutputFrame:SetWidth(700)
 		OutputFrame:SetHeight(520)
 		OutputFrame:Show()
 	elseif currencies[msg] then
@@ -884,48 +1044,26 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		end
 
 		UpdateData()
+	elseif keyword == "delete" then
+		if options and ArmyDB[options] then
+			print("Removing saved data for", options)
+			ArmyDB[options] = nil
+		elseif options then
+			print("No entry found for \"" .. options .. "\" - make sure you type the full character and realm name (case sensitive)")
+			print("Usage: /army delete Name-Realm Name")
+		end
 	else
-		local totalMoney, realmMoney = 0, 0
+		local totalMoney = 0
 		local faction,_ = UnitFactionGroup("player")
 		local name = UnitName("player")
 		local realm = GetRealmName()
 		local currencyTable = {}
-		local connectedRealms = {
-			["Ravenholdt"] = "Ravenholdt",
-			["Sporeggar"] = "Ravenholdt",
-			["Scarshield Legion"] = "Ravenholdt",
-			["The Venture Co"] = "Ravenholdt",
-			["Defias Brotherhood"] = "Ravenholdt",
-			["Earthen Ring"] = "Ravenholdt",
-			["Darkmoon Faire"] = "Ravenholdt",
-			["Xavius"] = "Xavius",
-			["Al'Akir"] = "Xavius",
-			["Skullcrusher"] = "Xavius",
-			["Burning Legion"] = "Xavius",
-			["The Sha'tar"] = "Moonglade",
-			["Moonglade"] = "Moonglade",
-			["Steamwheedle Cartel"] = "Moonglade",
-			["Bloodfeather"] = "Bloodfeather",
-			["Kor'gall"] = "Bloodfeather",
-			["Executus"] = "Bloodfeather",
-			["Burning Steppes"] = "Bloodfeather",
-			["Shattered Hand"] = "Bloodfeather",
-			["Terokkar"] = "Bloodfeather",
-			["Saurfang"] = "Bloodfeather",
-			["Darkspear"] = "Bloodfeather",
-		}
-		if connectedRealms[realm] then realm = connectedRealms[realm] end
 
 		for k, v in pairs(ArmyDB) do
 			local c = ArmyDB[k]
 
-			if connectedRealms[c["Realm"]] == realm or c["Realm"] == realm then
-				currencyTable[k] = c["Money"] or 0
-				realmMoney = realmMoney + c["Money"]
-			end
-
+			currencyTable[k] = c["Money"] or 0
 			totalMoney = totalMoney + c["Money"]
-			--print(c["Name"], c["Money"])
 		end
 
 		-- Sort the table
@@ -953,12 +1091,10 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			Scroll:AddChild(Label)
 		end
 
-		OutputFrame:SetStatusText("Connected " .. realm .. ":  " .. FormatLargeNumber(floor(realmMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
+		OutputFrame:SetStatusText("Account Total:  " .. FormatLargeNumber(floor(totalMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
 		OutputFrame:SetWidth(450)
 		OutputFrame:SetHeight(520)
 		OutputFrame:Show()
-
-		--DEFAULT_CHAT_FRAME:AddMessage("Account Total:  " .. FormatLargeNumber(floor(totalMoney / 10000)) .. " |TInterface/MoneyFrame/UI-GoldIcon:14:14|t")
 	end
 end
 
