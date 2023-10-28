@@ -1,32 +1,58 @@
 # ArmyData
 
-A rather crude addon that simply keeps track of character information for all your characters in a global table that other addons can acess (like WeakAuras). No one except me will probably ever realistically use this.
+A simple addon that keeps track of character data for you. All data is stored in a global table (``ArmyDB``) which can be accessed by other addons like WeakAuras.
 
-There is a slash command to display some gold/currency data. Other than that you will need to write your own WeakAuras or addons to display the information.
+The addon also keeps track of and provides useful output for:
+- Gold: ``/army``
+- Currencies and some currency-like items: ``/army Timewarped Badge`` (case sensitive)
+- Mythic Keystones: ``/army m+``
+- Weekly Dragonflight profession knowledge: ``/army weekly``
 
-Takes into account connected realms, but currently there is only connected realm data for the the specific realms I happen to play on:
+Almost all relevant currencies are stored. In addition the following items are also stored:
+- Primal Spirit, Blood of Sargeras, Expulsom, Hydrocore, Titalcore, Breath of Bwonsamdi, Sanguicell
+- Coin of Ancestry, Trial of Style Token
+- Mark of Honor
+- Polished Pet Charm, Shiny Pet Charm
+- Genesis Mote
+- Sandworn Relic
+- Dreamsurge Coalescence
 
-- Moonglade / Steamwheedle Cartel / The Sha'tar
-- Bloodfeather / Kor'gall / Executus / Burning Steppes / Shattered Hand / Terokkar / Saurfang / Darkspear
-- Ravenholdt / Sporeggar / Scarshield Legion / The Venture Co / Defias Brotherhood / Earthen Ring / Darkmoon Faire
-- Al'Akir / Xavius / Skullcrusher / Burning Legion
+---
 
-It also assumes that you have **Engineering on all characters**, since I do.
+### Screenshots
+![Screenshot 2023-10-28 at 16 53 35](https://github.com/glassleo/ArmyData/assets/9146240/88f31a90-061e-476e-8320-990ac11e80a2)
+![Screenshot 2023-10-28 at 16 58 16](https://github.com/glassleo/ArmyData/assets/9146240/30ae44bc-074b-489c-809b-a9ab12182a56)
+![Screenshot 2023-10-28 at 17 01 05](https://github.com/glassleo/ArmyData/assets/9146240/81235e44-d28a-4b4a-a35b-0c66e67e9afb)
 
-## Slash command: ``/army CurrencyName``
+---
 
-- Currencies are in CamelCase and have any special characters omitted, for example: ``GarrisonResources``, ``EpicureansAward`` or ``CoinsOfAir``
-- Displays the characters with the most amount of the given currency on that connected realm and faction
-- If you don't specify a currency name, gold will be used instead
+### Additional Commands
+- ``/army delete Name-Realm Name`` – Deletes all data for a specific character (name is case sensitive)
+- ``/army audit`` – WIP audit window
 
-## Global table: ``ArmyDB["name-realm"]``
+---
 
-- ``Name`` - Character Name - Example: ``Leo``
-- ``Realm`` - Realm Name - Example: ``The Sha'tar``
-- ``Faction`` - Faction Name - Example: ``Horde``
-- ``Class`` - Class (uppercase, in English) - Example: ``DEATHKNIGHT``
-- ``Money`` - Total amount of money (in Copper) - Example: ``124578454`` (12,457 Gold, 84 Silver and 54 Copper)
-- ``LootSpec`` - Current Loot Specialization - integer from ``0-4`` with ``0`` being no loot spec
-- ``Profession`` - Primary profession that is not Engineering - Example: ``Alchemy``
-- ``ProfessionIcon`` - Profession icon texture ID - Example: ``136240`` (![trade_alchemy](https://wow.zamimg.com/images/wow/icons/small/trade_alchemy.jpg))
-- Most currencies in CamelCase format as integers of current amount, for example: ``GarrisonResources``, ``EpicureansAward`` or ``CoinsOfAir``
+## ``ArmyDB`` table
+
+Each character has its own table stored as ``ArmyDB["Name-Real Name"]``
+
+Here are some of the keys available:
+- ``Name`` – Character name (example: ``Gorgina``)
+- ``Realm`` – Realm name (example: ``The Sha'tar``)
+- ``Faction`` – Faction (example: ``Horde``)
+- ``Class`` - Class (example: ``DEMONHUNTER``)
+- ``Money`` – Amount of money in copper (example: ``160432158`` representing 16,043 gold, 21 silver and 58 copper)
+- ``Specialization`` – Current loot specialization (example: ``1``)
+- ``Profession`` – First profession learned that is not Engineering (example: ``Jewelcrafting``)
+- ``Covenant`` – Shadowlands Covenant ID (example: ``1``)
+- ``Renown`` – Shadowlands Covenant Renown level (example: ``80``)
+- ``KeystoneMap`` – Current M+ Map ID (example: ``245`` for Freehold)
+- ``KeystoneLevel`` – Current M+ Key Level (example: ``20``)
+- ``Currencies`` – Table with currency data
+- ``Items`` – Table with item data
+- ``RenewedProtoDrake`` – Chosen Renewed Proto-Drake scale color (example: ``2`` for blue)
+- ``RenewedProtoDrakeTransformation`` – Chosen Renewed Proto-Drake transformation (example: ``1`` for no transformation)
+- ``Ìmp`` – Chosen Imp color
+- ``ImpStyle`` – Chosen Imp style
+- ``Moonkin`` – Chsoen Moonkin Form feather color
+- ``MoonkinTransformation`` – Chosen Moonkin Form full transformation
