@@ -27,6 +27,7 @@ Almost all relevant currencies are stored. In addition the following items are a
 ---
 
 ### Additional Commands
+- ``/army weeklyreset``– Wipes all saved Mythic Keystone data, which can be useful after the weekly reset if you don't want to relog all your characters
 - ``/army delete Name-Realm Name`` – Deletes all data for a specific character (name is case sensitive)
 - ``/army audit`` – WIP audit window
 
@@ -52,7 +53,7 @@ Here are some of the keys available:
 - ``Items`` – Table with item data
 - ``RenewedProtoDrake`` – Chosen Renewed Proto-Drake scale color (example: ``2`` for blue)
 - ``RenewedProtoDrakeTransformation`` – Chosen Renewed Proto-Drake transformation (example: ``1`` for no transformation)
-- ``Ìmp`` – Chosen Imp color
+- ``Imp`` – Chosen Imp color
 - ``ImpStyle`` – Chosen Imp style
 - ``Moonkin`` – Chsoen Moonkin Form feather color
 - ``MoonkinTransformation`` – Chosen Moonkin Form full transformation
