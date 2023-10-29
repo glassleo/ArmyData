@@ -480,17 +480,13 @@ function SlashCmdList.ARMYDATA(msg, ...)
 	end
 
 	if (msg == "key" or msg == "keys" or msg == "keystone" or msg == "keystones" or msg == "m+") then
-		local itemTable = {}
+		local itemTable, detailsTable, detailsSortTable = {}, {}, {}
+		local detailsTotal = 0
 		local icon = 4352494
-		local total = 0
 
 		for character in pairs(ArmyDB) do
 			itemTable[character] = ArmyDB[character].KeystoneLevel or 0
-			total = total + itemTable[character]
 		end
-
-		-- Sort the table
-		local sortedItemTable = getKeysSortedByValue(itemTable, function(a, b) return a > b end)
 
 		OutputFrame:SetTitle("|T" .. icon .. ":0|t |cffa335eeMythic Keystones|r")
 
@@ -500,13 +496,16 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		ScrollStatus = true
 		OutputGroup:AddChild(Scroll)
 
+		-- Sort the table
+		local sortedItemTable = getKeysSortedByValue(itemTable, function(a, b) return a > b end)
+
 		for i, k in ipairs(sortedItemTable) do
 			if tonumber(ArmyDB[k]["KeystoneLevel"] or 0) > 0 then
 				local level = itemTable[k] or 0
 
 				local Label = AceGUI:Create("Label")
 				Label:SetText((level > 0 and ("+" .. level) or ""))
-				Label:SetRelativeWidth(0.1)
+				Label:SetRelativeWidth(0.09)
 				Label:SetFontObject("GameFontNormal")
 				Scroll:AddChild(Label)
 
