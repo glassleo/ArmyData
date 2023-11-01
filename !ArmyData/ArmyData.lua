@@ -899,7 +899,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 					AddRow(SpellKnown(126819) or "?", 644001, "|cff71d5ffPolymorph: Porcupine|r", "|cff9d9d9dDrops from Porcupines in |cffffffffPandaria|r (BoE)|r")
 				end
 				if level >= 25 then
-					AddRow(SpellKnown(61305), 236547, "|cff71d5ffPolymorph: Black Cat|r", "|cff9d9d9dSold by Endora Moorehead in |rNorthrend Dalaran|cff9d9d9d (limited supply)|r")
+					AddRow(SpellKnown(61305), 236547, "|cff71d5ffPolymorph: Black Cat|r", "|cff9d9d9dSold by Endora Moorehead in |rNorthrend Dalaran")
 					AddRow(SpellKnown(28272) or "?", 135997, "|cff71d5ffPolymorph: Pig|r", "|cff9d9d9dLearned by The Amazing Zanzo in |rDalaran|cff9d9d9d (rare spawn)|r")
 					AddRow(SpellKnown(61721) or "?", 319458, "|cff71d5ffPolymorph: Rabbit|r", "|cff9d9d9dAvailable during |rNoblegarden")
 					AddRow(SpellKnown(28271) or "?", 132199, "|cff71d5ffPolymorph: Turtle|r", "|cff9d9d9dRare drop from fishing (BoE)")
@@ -1025,7 +1025,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				end
 				if level >= 60 then
 					if HasSkill(2827, 50) then
-						AddRow(CheckQuests("70573,70574,70575,70576,70577,70578,70579,70580,70581,70583,70584,70585,73145,73143,73144,75186"), 4548860, "|cff0070ddWyrmhole Generator: Dragon Isles|r", "|cff9d9d9dDeactivated Signal Transmitters|r")
+						AddRow(CheckQuests("70573,70574,70575,70576,70577,70578,70579,70580,70581,70583,70584,70585,73145,73143,73144,75186"), 4548860, "|cff0070ddWyrmhole Generator: Dragon Isles|r", "|cff9d9d9dFind all Deactivated Signal Transmitters|r")
 					else
 						AddRow(false, 4548860, "|cff0070ddWyrmhole Generator: Dragon Isles|r", CheckSkill(2827, 1, "Dragon Isles Engineering"))
 					end
