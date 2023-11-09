@@ -288,8 +288,9 @@ local function UpdateData()
 			["CliffsideWylderdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["CliffsideWylderdrake"] or 5,
 			["WindingSlitherdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrake"] or 1,
 			["WindingSlitherdrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrakeTransformation"] or 1,
-			["GrottoNetherwingDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["GrottoNetherwingDrake"] or 1,
+			["GrottoNetherwingDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["GrottoNetherwingDrake"] or 4,
 			["FlourishingWhimsydrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FlourishingWhimsydrake"] or 1,
+			["AlgarianStormrider"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["AlgarianStormrider"] or 1,
 
 			-- Druid
 			["Moonkin"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Moonkin"] or 1,
@@ -382,6 +383,7 @@ local function BarberHandler(self, event)
 		[1613] = "WindingSlitherdrake",
 		[6410] = "GrottoNetherwingDrake",
 		[8648] = "FlourishingWhimsydrake",
+		[8614] = "AlgarianStormrider",
 		-- Full Transformation
 		[2962] = "RenewedProtoDrakeTransformation",
 		[2044] = "HighlandDrakeTransformation",
@@ -433,6 +435,7 @@ local function BarberHandler(self, event)
 		            	125 - Winding Slitherdrake
 		            	149 - Grotto Netherwing Drake
 		            	188 - Flourishing Whimsydrake
+		            	? - Algarian Stormrider
 
 		            Druid
 		            	194 - Moonkin Form
@@ -450,11 +453,11 @@ local function BarberHandler(self, event)
 	            	]]--
 	            	-- 
 
-	            	--if id == 8475 then print(id, data.name, choice) end
+	            	
 	            	
 	            	if keys[id] then
 	            		UpdateSpecificData(keys[id], choice)
-	            		--print(event, keys[id], "set to", choice) -- Debug
+	            	--else print(id, data.name, choice) -- Debug
 	            	end
 	            end
 		    end
