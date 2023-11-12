@@ -37,6 +37,10 @@ local currencies = {
 	["Dragon Isles Supplies"] = 2003,
 
 	-- Dungeon and Raid
+	["Aspect's Dreaming Crests"] = 2718,
+	["Wyrm's Dreaming Crests"] = 2717,
+	["Drake's Dreaming Crests"] = 2716,
+	["Whelpling's Dreaming Crests"] = 2715,
 	["Flightstones"] = 2245,
 
 	-- Player vs. Player
@@ -110,6 +114,7 @@ local currencies = {
 	["Cyphers of the First Ones"] = 1979,
 
 	-- Dragonflight
+	["Dream Infusion"] = 2777,
 	["Elemental Overflow"] = 2118,
 	["Storm Sigil"] = 2122,
 	["Paracausal Flakes"] = 2594,
@@ -153,6 +158,7 @@ local items = {
 	["Sandworn Relic"] = 190189,
 
 	-- Dragonflight
+	["Seedbloom"] = 211376,
 	["Dreamsurge Coalescence"] = 207026,
 }
 
@@ -353,6 +359,7 @@ function GetSimpleItemInfo(id)
 	elseif id == 21100 then return "|cffffffffCoin of Ancestry|r", 133858
 	elseif id == 151134 then return "|cff1eff00Trial of Style Token|r", 1500867
 	elseif id == 207026 then return "|cffffffffDreamsurge Coalescence|r", 132858
+	elseif id == 211376 then return "|cff1eff00Seedbloom|r", 306845
 	else return id, 134400
 	end
 end
@@ -366,7 +373,7 @@ function ArmyGetKey(key, char)
 end
 
 
--- Dragonriding Customization
+-- Barber Shop/Dragonriding Customization
 local barber = CreateFrame("FRAME", "AutomagicBarbershopFrame")
 barber:RegisterEvent("BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE")
 --barber:RegisterEvent("BARBER_SHOP_CLOSE")
