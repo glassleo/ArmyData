@@ -13,9 +13,8 @@ Almost all relevant currencies are stored. In addition the following items are a
 - Coin of Ancestry, Trial of Style Token
 - Mark of Honor
 - Polished Pet Charm, Shiny Pet Charm
-- Genesis Mote
-- Sandworn Relic
-- Dreamsurge Coalescence
+- Genesis Mote, Sandworn Relic
+- Dreamsurge Coalescence, Seedbloom
 
 ---
 
