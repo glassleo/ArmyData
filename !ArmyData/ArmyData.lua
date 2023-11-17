@@ -743,6 +743,10 @@ function SlashCmdList.ARMYDATA(msg, ...)
 					if not SpellKnown(381871) then missing = missing and missing .. ", Dragonrider's Hunt" or "Dragonrider's Hunt" end
 				end
 				if not SpellKnown(384824) then missing = missing and missing .. ", Dragonrider's Compassion" or "Dragonrider's Compassion" end
+				if not SpellKnown(425782) then missing = missing and missing .. ", Second Wind" or "Second Wind" end
+				if not SpellKnown(425537) then missing = missing and missing .. ", Wind's Respite" or "Wind's Respite" end
+				if not SpellKnown(425537) then missing = missing and missing .. ", Wind's Respite" or "Wind's Respite" end
+				if not SpellKnown(425539) then missing = missing and missing .. ", Swift Skimming" or "Swift Skimming" end
 
 				AddRow((missing == false) and true or false, 4640486, "Dragonriding", "|cff9d9d9dMissing traits:|r " .. (missing or ""))
 				
@@ -791,7 +795,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 
 				AddRow(SpellKnown(209997), 134355, "|cff71d5ffPlay Dead|r", "|cff9d9d9dSold by Outfitter Reynolds in |rTrueshot Lodge")
 				AddRow(SpellKnown(127933), 134279, "|cff71d5ffFireworks|r", "|cff9d9d9dSold by Hobart Grapplehammer in |rDalaran")
-				AddRow(SpellKnown(61648), 463491, "|cff71d5ffAspect of the Chameleon|r", "|cff9d9d9dSold by Outfitter Reynolds in |rTrueshot Lodge")
+				AddRow(SpellKnown(61648), 463491, "|cff71d5ffAspect of the Chameleon|r", "|cff9d9d9dSold by Lucas Sigmund in |rHighmountain")
 				AddRow(SpellKnown(125050), 133718, "|cff71d5ffFetch|r", "|cff9d9d9dSold by Outfitter Reynolds in |rTrueshot Lodge")
 				AddRow(SpellKnown(138430), 791593, "|cff71d5ffAncient Zandalari Knowledge|r", "|cff9d9d9dDrops from Zandalari Dinomancers on |rIsle of Giants")
 				AddRow(SpellKnown(242155), 929300, "|cff71d5ffHybrid Kinship|r", "|cff9d9d9dSold by Pan the Kind Hand in |rTrueshot Lodge")
@@ -1164,6 +1168,13 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				
 				AddRow(CheckQuests("64958"), nil, QuestNormal .. " |cffffd100Zereth Mortis|r", "|cff9d9d9dSkip available in |rOribos")
 				AddRow(CheckQuests("65694"), 1360978, "|cffa335eeFont of Ephemeral Power|r", CheckReputation(2478, 5))
+			end
+
+			----
+			if level >= 50 then
+				AddLabel("Battle for Azeroth")
+
+				AddRow(CheckQuests(AH("46931", "46931")), nil, QuestNormal .. " |cffffd100" .. AH("Kul Tiras", "Zandalar") .. "|r", "|cff9d9d9dSkip available in |r" .. AH("Stormwind", "Orgrimmar"))
 			end
 
 			----
