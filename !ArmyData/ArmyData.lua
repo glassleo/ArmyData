@@ -46,6 +46,8 @@ local currencies = {
 	-- Player vs. Player
 	["Honor"] = 1792,
 	["Conquest"] = 1602,
+	["Bloody Tokens"] = 2123,
+	["Trophy of Strife"] = 2797,
 
 	-- Bonus Rolls
 	["Lesser Charm of Good Fortune"] = 738,
@@ -118,6 +120,7 @@ local currencies = {
 	["Elemental Overflow"] = 2118,
 	["Storm Sigil"] = 2122,
 	["Paracausal Flakes"] = 2594,
+	["Mysterious Fragment"] = 2657,
 
 	-- Cooking
 	["Epicurean's Award"] = 81,
@@ -735,7 +738,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				if not SpellKnown(403093) then missing = "Airborne Recovery" end
 				if not SpellKnown(404243) then missing = missing and missing .. ", Land's Blessing" or "Land's Blessing" end
 				if not SpellKnown(377922) then missing = missing and missing .. ", Beyond Infinity" or "Beyond Infinity" end
-				if not SpellKnown(396760) then missing = missing and missing .. ", Yearning for the Sky" or "Yearning for the Sky" end
+				if not SpellKnown(396760) and not SpellKnown(377940) then missing = missing and missing .. ", Yearning for the Sky" or "Yearning for the Sky" end
 				if not SpellKnown(377967) then missing = missing and missing .. ", At Home Aloft" or "At Home Aloft" end
 				if prof1Name == "Herbalism" or prof2Name == "Herbalism" or prof1Name == "Mining" or prof2Name == "Mining" then
 					if not SpellKnown(381870) then missing = missing and missing .. ", Dragonrider's Cultivation" or "Dragonrider's Cultivation" end
@@ -1198,7 +1201,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Alchemy" or prof2Name == "Alchemy" then
 				AddLabel("Alchemy")
 				AddRow(CheckAnyQuest("70533,70530,70531,70532"), nil, QuestNormal .. " |cffffd100Alchemy Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("72427,66940,66938,66937,75363,75371"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("72427,66940,66938,66937,75363,75371,77932,77933"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("66373,66374"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70511"), 463558, "|cff0070ddElementious Splinter|r", "|cff9d9d9dDrops from |rElementals")
 				AddRow(CheckQuests("70504"), 1500941, "|cff0070ddDecaying Phlegm|r", "|cff9d9d9dDrops from |rDecay Elementals")
@@ -1208,7 +1211,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Blacksmithing" or prof2Name == "Blacksmithing" then
 				AddLabel("Blacksmithing")
 				AddRow(CheckAnyQuest("70234,70211,70233,70235"), nil, QuestNormal .. " |cffffd100Blacksmithing Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("66897,66941,66517,72398,75569,75148"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("66897,66941,66517,72398,75569,75148,77935,77936"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70589"), nil, QuestNormal .. " |cffffd100Blacksmithing Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
 				AddRow(CheckQuests("66381,66382"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70512"), 962047, "|cff0070ddPrimeval Earth Fragment|r", "|cff9d9d9dDrops from |rEarth Elementals")
@@ -1219,7 +1222,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Enchanting" or prof2Name == "Enchanting" then
 				AddLabel("Enchanting")
 				AddRow(CheckAnyQuest("72175,72172,72155,72173"), nil, QuestNormal .. " |cffffd100Enchanting Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("72423,66900,66935,66884,75865,75150"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("72423,66900,66935,66884,75865,75150,77910,77937"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("66377,66378"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70514"), 237016, "|cff0070ddPrimordial Aether|r", "|cff9d9d9dDrops from |rArcane Elementals")
 				AddRow(CheckQuests("70515"), 1379232, "|cff0070ddPrimalist Charm|r", "|cff9d9d9dDrops from |rPrimalists")
@@ -1237,7 +1240,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Inscription" or prof2Name == "Inscription" then
 				AddLabel("Inscription")
 				AddRow(CheckAnyQuest("70561,70560,70559,70558"), nil, QuestNormal .. " |cffffd100Inscription Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("72438,66945,66943,66944,75573,75149"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("72438,66945,66943,66944,75573,75149,77889,77914"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70592"), nil, QuestNormal .. " |cffffd100Inscription Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
 				AddRow(CheckQuests("66375,66376"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70518"), 134420, "|cff0070ddCurious Djaradin Rune|r", "|cff9d9d9dDrops from |rDjaradin")
@@ -1248,7 +1251,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Jewelcrafting" or prof2Name == "Jewelcrafting" then
 				AddLabel("Jewelcrafting")
 				AddRow(CheckAnyQuest("70563,70564,70562,70565"), nil, QuestNormal .. " |cffffd100Jewelcrafting Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("66516,66949,66950,72428,75362,75602"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("66516,66949,66950,72428,75362,75602,77912,77892"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70593"), nil, QuestNormal .. " |cffffd100Jewelcrafting Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
 				AddRow(CheckQuests("66388,66389"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70520"), 132879, "|cff0070ddIncandescent Curio|r", "|cff9d9d9dDrops from |rEarth Elementals")
@@ -1259,7 +1262,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Leatherworking" or prof2Name == "Leatherworking" then
 				AddLabel("Leatherworking")
 				AddRow(CheckAnyQuest("70567,70568,70571,70569"), nil, QuestNormal .. " |cffffd100Leatherworking Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("66951,66363,66364,72407,75354,75368"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("66951,66363,66364,72407,75354,75368,77945,77946"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70594"), nil, QuestNormal .. " |cffffd100 Leatherworking Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
 				AddRow(CheckQuests("66384,66385"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70522"), 1377086, "|cff0070ddOssified Hide|r", "|cff9d9d9dDrops from |rProto-Drakes")
@@ -1286,7 +1289,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Tailoring" or prof2Name == "Tailoring"then
 				AddLabel("Tailoring")
 				AddRow(CheckAnyQuest("70587,70572,70582,70586"), nil, QuestNormal .. " |cffffd100Tailoring Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("66899,66953,66952,72410,75407,75600"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("66899,66953,66952,72410,75407,75600,77947,77949"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70595"), nil, QuestNormal .. " |cffffd100Tailoring Services Requested|r", "|cff9d9d9dComplete 3 Work Orders|r")
 				AddRow(CheckQuests("66386,66387"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70524"), 463527, "|cff0070ddOhn'ahran Weave|r", "|cff9d9d9dDrops from |rNokhud Centaurs")
@@ -1297,7 +1300,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 			if prof1Name == "Engineering" or prof2Name == "Engineering"then
 				AddLabel("Engineering")
 				AddRow(CheckAnyQuest("70557,70545,70539,70540"), nil, QuestNormal .. " |cffffd100Engineering Weekly|r", "|cff9d9d9dCrafting quest|r")
-				AddRow(CheckAnyQuest("66942,66891,72396,66890,75575,75608"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
+				AddRow(CheckAnyQuest("66942,66891,72396,66890,75575,75608,77891,77938"), nil, QuestNormal .. " |cffffd100Artisan's Market Weekly|r", "|cff9d9d9dCollection quest|r")
 				AddRow(CheckQuests("70591"), nil, QuestNormal .. " |cffffd100Engineering Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
 				AddRow(CheckQuests("66379,66380"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70516"), 2000861, "|cff0070ddKeeper's Mark|r", "|cff9d9d9dDrops from |rTitan Constructs")
