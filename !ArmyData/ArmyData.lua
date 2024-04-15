@@ -25,6 +25,7 @@ frame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 frame:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
 frame:RegisterEvent("WEEKLY_REWARDS_UPDATE")
 frame:RegisterEvent("WEEKLY_REWARDS_ITEM_CHANGED")
+frame:RegisterEvent("ITEM_PUSH")
 
 
 local currencies = {
@@ -1255,7 +1256,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 				AddRow(CheckQuests("70593"), nil, QuestNormal .. " |cffffd100Jewelcrafting Services Requested|r", "|cff9d9d9dComplete 2 Work Orders|r")
 				AddRow(CheckQuests("66388,66389"), 1060570, "|cff0070ddExpedition Treasures|r", CheckItems(191304, 1060570, "|cffffffffSturdy Expedition Shovel|r"))
 				AddRow(CheckQuests("70520"), 132879, "|cff0070ddIncandescent Curio|r", "|cff9d9d9dDrops from |rEarth Elementals")
-				AddRow(CheckQuests("70521"), 134890, "|cff0070ddElegantly Engraved Embellishment|r", "|cff9d9d9dDrops from |rSundered Flame Draconids")
+				AddRow(CheckQuests("70521"), 134890, "|cff0070ddElegantly Engraved Embellishment|r", "|cff9d9d9dDrops from |rPrimalists")
 				AddRow(CheckQuests("74112"), 3615519, "|cff0070ddDraconic Treatise on Jewelcrafting|r", "|cff9d9d9dCrafted with |rInscription")
 			end
 			
@@ -1468,7 +1469,7 @@ local function eventHandler(self, event)
 	if event == "VARIABLES_LOADED" then
 		-- Make sure defaults are set
 		if not ArmyDB then ArmyDB = { } end
-	elseif event == "WEEKLY_REWARDS_UPDATE" then
+	elseif event == "WEEKLY_REWARDS_UPDATE" or event == "ITEM_PUSH" then
 		C_Timer.After(1, function()
 			UpdateData()
 		end)
