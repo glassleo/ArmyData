@@ -289,7 +289,7 @@ local function UpdateData()
 			["Currencies"] = {},
 			["Items"] = {},
 
-			-- Dragonriding
+			-- Mount
 			["RenewedProtoDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["RenewedProtoDrake"] or 5,
 			["RenewedProtoDrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["RenewedProtoDrakeTransformation"] or 5,
 			["WindborneVelocidrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindborneVelocidrake"] or 4,
@@ -299,8 +299,10 @@ local function UpdateData()
 			["WindingSlitherdrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrake"] or 1,
 			["WindingSlitherdrakeTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["WindingSlitherdrakeTransformation"] or 1,
 			["GrottoNetherwingDrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["GrottoNetherwingDrake"] or 4,
-			["FlourishingWhimsydrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FlourishingWhimsydrake"] or 1,
 			["AlgarianStormrider"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["AlgarianStormrider"] or 1,
+			["FlourishingWhimsydrake"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FlourishingWhimsydrake"] or 1,
+			["DelversDirigible"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["DelversDirigible"] or 1,
+			["DelversDirigibleTransformation"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["DelversDirigibleTransformation"] or 1,
 
 			-- Druid
 			["Moonkin"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Moonkin"] or 1,
@@ -320,6 +322,9 @@ local function UpdateData()
 			["FelguardStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FelguardStyle"] or 1,
 			["Felhunter"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Felhunter"] or 1,
 			["FelhunterStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["FelhunterStyle"] or 1,
+			["Darkglare"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Darkglare"] or 1,
+			["DarkglareStyle"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["DarkglareStyle"] or 1,
+			["Tyrant"] = ArmyDB[name.."-"..realm] and ArmyDB[name.."-"..realm]["Tyrant"] or 1,
 		}
 
 		for currencyName, currencyID in pairs(currencies) do
@@ -386,7 +391,7 @@ barber:RegisterEvent("BARBER_SHOP_RESULT")
 
 local function BarberHandler(self, event)
 	local keys = {
-		-- Skin Color
+		-- Color
 		[1611] = "RenewedProtoDrake",
 		[1733] = "WindborneVelocidrake",
 		[1609] = "HighlandDrake",
@@ -395,10 +400,12 @@ local function BarberHandler(self, event)
 		[6410] = "GrottoNetherwingDrake",
 		[8648] = "FlourishingWhimsydrake",
 		[8614] = "AlgarianStormrider",
+		[8801] = "DelversDirigible",
 		-- Full Transformation
 		[2962] = "RenewedProtoDrakeTransformation",
 		[2044] = "HighlandDrakeTransformation",
 		[6397] = "WindingSlitherdrakeTransformation",
+		[8855] = "DelversDirigibleTransformation",
 		-- Druid
 		[8654] = "Moonkin",
 		[922]  = "MoonkinTransformation",
@@ -418,6 +425,9 @@ local function BarberHandler(self, event)
 		[8602] = "FelguardStyle",
 		[8475] = "Felhunter",
 		[8474] = "FelhunterStyle",
+		[8667] = "Darkglare",
+		[8666] = "DarkglareStyle",
+		[8669] = "Tyrant",
 	}
 
 	if event == "BARBER_SHOP_RESULT" or event == "BARBER_SHOP_FORCE_CUSTOMIZATIONS_UPDATE" then
@@ -438,15 +448,16 @@ local function BarberHandler(self, event)
 					
 					ChrModelIDs
 					-----------
-            		Dragonriding 
+            		Mount 
             			124 - Renewed Proto-Drake
             			129 - Windborne Velocidrake
 		            	123 - Highland Drake
 		            	126 - Cliffside Wylderdrake
 		            	125 - Winding Slitherdrake
 		            	149 - Grotto Netherwing Drake
+		            	186 - Algarian Stormrider
 		            	188 - Flourishing Whimsydrake
-		            	? - Algarian Stormrider
+		            	202 - Delver's Dirigible
 
 		            Druid
 		            	194 - Moonkin Form
@@ -459,6 +470,8 @@ local function BarberHandler(self, event)
 		            	181 - Felguard
 		            	184 - Infernal
 		            	182 - Doomguard
+		            	197 - Darkglare
+		            	198 - Tyrant
 
 
 	            	]]--
