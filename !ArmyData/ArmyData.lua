@@ -333,7 +333,7 @@ local function UpdateData()
 		end
 
 		for itemName, itemID in pairs(items) do
-			local amount = GetItemCount(itemID, true)
+			local amount = C_Item.GetItemCount(itemID, true)
 			ArmyDB[name.."-"..realm]["Items"][itemName] = amount or 0
 		end
 	end
@@ -658,12 +658,12 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		end
 
 		local function HasItem(id)
-			local count = GetItemCount(id, false, false, false) or 0
+			local count = C_Item.GetItemCount(id, false, false, false) or 0
 			return (count >= 1) and true or false
 		end
 
 		local function HasBankItem(id)
-			local count = GetItemCount(id, true, false, true) or 0
+			local count = C_Item.GetItemCount(id, true, false, true) or 0
 			return (count >= 1) and true or false
 		end
 
@@ -721,7 +721,7 @@ function SlashCmdList.ARMYDATA(msg, ...)
 		end
 
 		local function CheckItems(id, icon, name)
-			local count = GetItemCount(id, true, true, true) or 0
+			local count = C_Item.GetItemCount(id, true, true, true) or 0
 			return (count >= 1 and "|cff1aff1a" .. count or "|cff9d9d9dNo") .. " |T" .. icon .. ":0|t " .. name .. " available"
 		end
 
