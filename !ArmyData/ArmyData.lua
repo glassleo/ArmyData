@@ -232,6 +232,15 @@ local ChallengeMap = {
 	[456] = "Throne of the Tides",
 	[463] = "Dawn of the Infinite: Galakrond's Fall",
 	[464] = "Dawn of the Infinite: Murozond's Rise",
+	[499] = "Priory of the Sacred Flame",
+	[500] = "The Rookery",
+	[501] = "The Stonevault",
+	[502] = "City of Threads",
+	[503] = "Ara-Kara, City of Echoes",
+	[504] = "Darkflame Cleft",
+	[505] = "The Dawnbreaker",
+	[506] = "Cinderbrew Meadery",
+	[507] = "Grim Batol",
 }
 
 local function getKeysSortedByValue(tbl, sortFunction)
