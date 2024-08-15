@@ -4,6 +4,7 @@
 ## Notes: Stores data for your Army of Alts
 ## Author: Leo
 ## IconTexture: 413577
+## OptionalDeps: Ace3
 
 ## SavedVariables: ArmyDB
 
