@@ -241,6 +241,7 @@ local ChallengeMap = {
 	[505] = "The Dawnbreaker",
 	[506] = "Cinderbrew Meadery",
 	[507] = "Grim Batol",
+	[525] = "Operation: Floodgate",
 }
 
 local function getKeysSortedByValue(tbl, sortFunction)
