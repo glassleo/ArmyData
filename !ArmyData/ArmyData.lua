@@ -242,6 +242,13 @@ local ChallengeMap = {
 	[506] = "Cinderbrew Meadery",
 	[507] = "Grim Batol",
 	[525] = "Operation: Floodgate",
+	[541] = "The Stonecore",
+	[542] = "Eco-Dome Al'dani",
+	[556] = "Pit of Saron",
+	[557] = "Windrunner Spire",
+	[558] = "Magisters' Terrace",
+	[559] = "Nexus-Point Xenas",
+	[560] = "Maisara Caverns",
 }
 
 local function getKeysSortedByValue(tbl, sortFunction)
